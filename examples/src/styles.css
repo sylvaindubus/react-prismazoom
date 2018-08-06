@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  background-color: #eee;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 100%;
+}
+
+.App-header {
+  background-color: #222;
+  height: 80px;
+  padding: 20px;
+  color: white;
+}
+
+.App-footer {
+  background-color: #222;
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 120px;
+  padding: 10px;
+  font-family: sans-serif;
+  color: #fff;
+  border-radius: 8px 8px 0 0
+}
+
+.App-wrapper {
+  display: flex;
+  min-height: calc(100vh - 120px);
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.App-zoom {
+  display: inline-block;
+  width: 640px;
+}
+
+.App-image {
+  width: 100%;
+}
+
+.App-card {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  right: 10px;
+  width: 210px;
+  padding: 10px;
+  text-align: left;
+  background-color: rgba(34, 34, 34, 0.8);
+  color: #fff;
+  font-family: sans-serif;
+  font-size: 0.75rem;
+}
+.App-card h2 {
+  margin: 0 0 5px 0;
+}
+.App-card p {
+  margin: 0 0 5px 0;
+}
+.App-card a,
+.App-card a:visited {
+  color: #61DAFB
+}
+
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
