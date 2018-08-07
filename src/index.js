@@ -15,7 +15,8 @@ export default class PrismaZoom extends PureComponent {
     leftBoundary: PropTypes.number,
     rightBoundary: PropTypes.number,
     topBoundary: PropTypes.number,
-    bottomBoundary: PropTypes.number
+    bottomBoundary: PropTypes.number,
+    animDuration: PropTypes.number
   }
 
   static defaultProps = {
@@ -26,7 +27,8 @@ export default class PrismaZoom extends PureComponent {
     leftBoundary: 0,
     rightBoundary: 0,
     topBoundary: 0,
-    bottomBoundary: 0
+    bottomBoundary: 0,
+    animDuration: 0.25
   }
 
   static defaultState = {
@@ -392,13 +394,13 @@ export default class PrismaZoom extends PureComponent {
   }
 
   render () {
-    const { className, children } = this.props
+    const { className, children, animDuration } = this.props
     const { zoom, posX, posY, cursor, useTransition } = this.state
 
     const style = {
       ...this.props.style,
       transform: `translate(${posX}px, ${posY}px) scale(${zoom})`,
-      transition: (useTransition ? 'transform ease-in-out 0.25s' : ''),
+      transition: (useTransition ? `transform ease-in-out ${animDuration}s` : ''),
       cursor: cursor,
       touchAction: 'none'
     }

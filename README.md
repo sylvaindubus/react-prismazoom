@@ -65,6 +65,7 @@ Go to http://localhost:1664.
 | rightBoundary | number | 0 | Right screen-relative boundary, used to enlarge pan zone. |
 | topBoundary | number | 0 | Top screen-relative boundary, used to enlarge pan zone. |
 | bottomBoundary | number | 0 | Bottom screen-relative boundary, used to enlarge pan zone. |
+| animDuration | number | 0.25 | Animation duration (in seconds). |
 
 **Note:** all props are optional.
 
