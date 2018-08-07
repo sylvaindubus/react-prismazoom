@@ -1,0 +1,31 @@
+image: node:8
+
+stages:
+  - tests
+  - publish
+
+before_script:
+  - echo -e "\n"$NPMRC_REGISTRY_KEY >> $CI_PROJECT_DIR/.npmrc
+  - sed -ie 's/\"name\": \"react-prismazoom\"/\"name\": \"@prismamedia\/react-prismazoom\"/' package.json
+
+tests:
+  stage: tests
+  script:
+    - npm install
+    - npm run test
+  tags:
+    - PMD
+    - STG
+    - ci
+
+publish:
+  stage: publish
+  only:
+    - tags
+  script:
+    - npm install
+    - npm publish --access restricted
+  tags:
+    - PMD
+    - STG
+    - ci
