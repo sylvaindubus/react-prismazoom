@@ -93,4 +93,4 @@ Return the current zoom value.
 
 ## License
 
-React PrismaZoom is licensed under the MIT license. See the LICENSE.md file for more details.
+React PrismaZoom is licensed under the ISC license. See the LICENSE.md file for more details.
