@@ -82,8 +82,8 @@ Decrements the zoom ratio with the given value.
 **zoomToZone (relX, relY, relWidth, relHeight) ⇒ `undefined`**
 Zoom to the specified zone on relative coordinates at given width and height dimensions.
 
-**reset (value) ⇒ `undefined`**
+**reset () ⇒ `undefined`**
 Reset the component to its initial state.
 
-**getZoom (value) ⇒ `number`**
+**getZoom () ⇒ `number`**
 Return the current zoom value.
