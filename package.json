@@ -1,5 +1,5 @@
 {
-  "name": "@prismamedia/react-prismazoom",
+  "name": "react-prismazoom",
   "version": "1.0.0",
   "description": "A pan and zoom component for React, using CSS transformations.",
   "author": "Sylvain DUBUS <svn.dbs@gmail.com>",

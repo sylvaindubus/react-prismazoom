@@ -4,9 +4,11 @@ stages:
   - tests
   - publish
 
+
 before_script:
   - echo -e "\n"$NPMRC_REGISTRY_KEY >> $CI_PROJECT_DIR/.npmrc
-  - sed -ie 's/\"name\": \"react-prismazoom\"/\"name\": \"@prismamedia\/react-prismazoom\"/' package.json
+  - sed -i -e '0,/react-prismazoom/s//@prismamedia\/react-prismazoom/' package.json
+  # See: https://stackoverflow.com/questions/148451/how-to-use-sed-to-replace-only-the-first-occurrence-in-a-file
 
 tests:
   stage: tests
