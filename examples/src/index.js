@@ -16,6 +16,12 @@ class App extends Component {
   onZoomChange = zoom => {
     this.setState({ zoom })
   }
+  onClickOnZoomOut = event => {
+    this.refs.prismaZoom.zoomOut(1)
+  }
+  onClickOnZoomIn = event => {
+    this.refs.prismaZoom.zoomIn(1)
+  }
   onDoubleClickOnCard = event => {
     event.preventDefault()
     event.stopPropagation()
@@ -59,7 +65,9 @@ class App extends Component {
           </PrismaZoom>
         </section>
         <footer className="App-footer">
-          <span>{`Zoom: ${parseInt((this.state.zoom * 100))}%`}</span>
+          <button className="App-button" onClick={this.onClickOnZoomOut}>-</button>
+          <span className="App-zoomLabel">{`Zoom: ${parseInt((this.state.zoom * 100))}%`}</span>
+          <button className="App-button" onClick={this.onClickOnZoomIn}>+</button>
         </footer>
       </div>
     )

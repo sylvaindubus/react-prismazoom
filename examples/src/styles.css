@@ -25,11 +25,29 @@ body {
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  width: 120px;
   padding: 10px;
   font-family: sans-serif;
   color: #fff;
   border-radius: 8px 8px 0 0
+}
+
+.App-zoomLabel {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.App-button {
+  display: inline-block;
+  margin: 0 5px;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  outline: none;
+  background: none;
+  color: #fff;
+  font-size: 1.125rem;
+  cursor: pointer;
 }
 
 .App-wrapper {
@@ -72,7 +90,6 @@ body {
 .App-card a:visited {
   color: #61DAFB
 }
-
 
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
