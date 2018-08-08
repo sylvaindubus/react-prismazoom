@@ -59,7 +59,7 @@ import PrismaZoom from 'react-prismazoom'
 | Name | Type | Default | Description |
 | --- | --- | --- |  --- |
 | className | string | None | Class name to apply on the zoom wrapper. |
-| style | object | None | Style to apply on the zoom wrapper. Note that *transform*, *transition*, *cursor* and *touch-action* cannot be overridden. Example: `style={{backgroundColor: red}}`. |
+| style | object | None | Style to apply on the zoom wrapper. Note that *transform*, *transition*, *cursor* and *touch-action* cannot be overridden. Example: `style={{backgroundColor: 'red'}}`. |
 | minZoom | number | 1 | Minimum zoom ratio. |
 | maxZoom | number | 5 | Maximum zoom ratio. |
 | scrollVelocity | number | 0.1 | Zoom increment or decrement on each scroll wheel detection. |
@@ -76,26 +76,26 @@ import PrismaZoom from 'react-prismazoom'
 
 These functions can be called from parent components.
 
-**zoomIn (value)**\
-*Increments the zoom with the given value.*\
+**zoomIn (value)**  
+*Increments the zoom with the given value.*  
 Param {value: Number} : Zoom value
 
-**zoomOut (value)**\
-*Decrements the zoom with the given value.*\
+**zoomOut (value)**  
+*Decrements the zoom with the given value.*  
 Param {value: Number} : Zoom value
 
-**zoomToZone (relX, relY, relWidth, relHeight)**\
-*Zoom-in on the specified zone with the given relative coordinates and dimensions.*\
-Param {relX: Number} : Relative X position of the zone left-top corner in pixels\
-Param {relY: Number} : Relative Y position of the zone left-top corner in pixels\
-Param {relWidth: Number} : Zone width in pixels\
+**zoomToZone (relX, relY, relWidth, relHeight)**  
+*Zoom-in on the specified zone with the given relative coordinates and dimensions.*  
+Param {relX: Number} : Relative X position of the zone left-top corner in pixels  
+Param {relY: Number} : Relative Y position of the zone left-top corner in pixels  
+Param {relWidth: Number} : Zone width in pixels  
 Param {relHeight: Number} : Zone height in pixels
 
-**reset ()**\
+**reset ()**  
 *Resets the component to its initial state.*
 
-**getZoom ()**\
-*Returns the current zoom value.*\
+**getZoom ()**  
+*Returns the current zoom value.*  
 Return {Number} : Zone value
 
 ## License
