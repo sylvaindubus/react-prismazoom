@@ -64,10 +64,10 @@ import PrismaZoom from 'react-prismazoom'
 | maxZoom | number | 5 | Maximum zoom ratio. |
 | scrollVelocity | number | 0.1 | Zoom increment or decrement on each scroll wheel detection. |
 | onZoomChange | function | null | Function called each time the zoom value changes. |
-| leftBoundary | number | 0 | Left screen-relative boundary, used to enlarge panning zone. |
-| rightBoundary | number | 0 | Right screen-relative boundary, used to enlarge panning zone. |
-| topBoundary | number | 0 | Top screen-relative boundary, used to enlarge panning zone. |
-| bottomBoundary | number | 0 | Bottom screen-relative boundary, used to enlarge panning zone. |
+| leftBoundary | number | 0 | Left screen-relative boundary, used to limit panning zone. |
+| rightBoundary | number | 0 | Right screen-relative boundary, used to limit panning zone. |
+| topBoundary | number | 0 | Top screen-relative boundary, used to limit panning zone. |
+| bottomBoundary | number | 0 | Bottom screen-relative boundary, used to limit panning zone. |
 | animDuration | number | 0.25 | Animation duration (in seconds). |
 
 **Note:** all props are optional.
@@ -76,20 +76,27 @@ import PrismaZoom from 'react-prismazoom'
 
 These functions can be called from parent components.
 
-**zoomUp (value) ⇒ `undefined`**
-Increments the zoom ratio with the given value.
+**zoomIn (value)**
+*Increments the zoom with the given value.*
+Param {value: Number} : Zoom value
 
-**zoomDown (value) ⇒ `undefined`**
-Decrements the zoom ratio with the given value.
+**zoomOut (value)**
+*Decrements the zoom with the given value.*
+Param {value: Number} : Zoom value
 
-**zoomToZone (relX, relY, relWidth, relHeight) ⇒ `undefined`**
-Zoom to the specified zone on relative coordinates at given width and height dimensions.
+**zoomToZone (relX, relY, relWidth, relHeight)**
+*Zoom-in on the specified zone with the given relative coordinates and dimensions.*
+Param {relX: Number} : Relative X position of the zone left-top corner in pixels
+Param {relY: Number} : Relative Y position of the zone left-top corner in pixels
+Param {relWidth: Number} : Zone width in pixels
+Param {relHeight: Number} : Zone height in pixels
 
-**reset () ⇒ `undefined`**
-Reset the component to its initial state.
+**reset ()**
+*Resets the component to its initial state.*
 
-**getZoom () ⇒ `number`**
-Return the current zoom value.
+**getZoom ()**
+*Returns the current zoom value.*
+Return {Number} : Zone value
 
 ## License
 

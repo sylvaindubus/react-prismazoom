@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
+// Max delay between two taps to consider a double tap (in milliseconds)
 const doubleTouchMaxDelay = 300
 
 export default class PrismaZoom extends PureComponent {
@@ -20,41 +21,67 @@ export default class PrismaZoom extends PureComponent {
   }
 
   static defaultProps = {
+    // Class name to apply on the zoom wrapper
+    className: null,
+    // Style to apply on the zoom wrapper
+    style: {},
+    // Minimum zoom ratio
     minZoom: 1,
+    // Maximum zoom ratio
     maxZoom: 5,
+    // Zoom increment or decrement on each scroll wheel detection
     scrollVelocity: 0.1,
+    // Function called each time the zoom value changes
     onZoomChange: null,
+    // Left screen-relative boundary, used to limit panning zone
     leftBoundary: 0,
+    // Right screen-relative boundary, used to limit panning zone
     rightBoundary: 0,
+    // Top screen-relative boundary, used to limit panning zone
     topBoundary: 0,
+    // Bottom screen-relative boundary, used to limit panning zone
     bottomBoundary: 0,
+    // Animation duration (in seconds)
     animDuration: 0.25
   }
 
   static defaultState = {
+    // Transform scale value property
     zoom: 1,
+    // Transform translateX value property
     posX: 0,
+    // Transform translateY value property
     posY: 0,
+    // Cursor style property
     cursor: 'auto',
+    // Uses transition property
     useTransition: true
   }
 
   constructor (props) {
     super(props)
+    // Last cursor position
     this.lastCursor = null
+    // Last touch position
     this.lastTouch = null
+    // Last touch time in milliseconds
     this.lastTouchTime = 0
+    // Last double tap time (used to limit multiple double tap) in milliseconds
     this.lastDoubleTapTime = 0
+    // Last calculated distance between two fingers in pixels
     this.lastTouchDistance = null
+
     this.state = {...this.constructor.defaultState}
   }
 
-  componentDidUpdate (prevProps, prevState) {
-    if (this.props.onZoomChange && this.state.zoom !== prevState.zoom) {
-      this.props.onZoomChange(this.state.zoom)
-    }
-  }
-
+  /**
+   * Calculates new translate positions for CSS transformations.
+   * @param  {DOMRect} rect Main element on which transformations will apply
+   * @param  {Number} x     Relative (rect-based) X position in pixels
+   * @param  {Number} y     Relative (rect-based) Y position in pixels
+   * @param  {Number} zoom  Scale value
+   * @return {Array}        New X and Y positions
+   */
   getNewPosition = (rect, x, y, zoom) => {
     const [prevZoom, prevPosX, prevPosY] = [this.state.zoom, this.state.posX, this.state.posY]
 
@@ -83,7 +110,16 @@ export default class PrismaZoom extends PureComponent {
     }
   }
 
-  getLimitedShift (shift, minLimit, maxLimit, minElement, maxElement) {
+  /**
+   * Calculates the narrowed shift for panning actions.
+   * @param  {Number} shift      Initial shift in pixels
+   * @param  {Number} minLimit   Minimum limit (left or top) in pixels
+   * @param  {Number} maxLimit   Maximum limit (right or bottom) in pixels
+   * @param  {Number} minElement Left or top element position in pixels
+   * @param  {Number} maxElement Right or bottom element position in pixels
+   * @return {Number}            Narrowed shift
+   */
+  getLimitedShift = (shift, minLimit, maxLimit, minElement, maxElement) => {
     if (shift > 0) {
       if (minElement > minLimit) {
         // Forbid move if we are moving to left or top while we are already out minimum boudaries
@@ -105,6 +141,12 @@ export default class PrismaZoom extends PureComponent {
     return shift
   }
 
+  /**
+   * Determines cursor style.
+   * @param  {Boolean} canMoveOnX Element can be panned on the X axis
+   * @param  {Boolean} canMoveOnY Element can be panned on the Y axis
+   * @return {String}             Cursor style
+   */
   getCursor = (canMoveOnX, canMoveOnY) => {
     if (canMoveOnX && canMoveOnY) {
       return 'move'
@@ -117,23 +159,27 @@ export default class PrismaZoom extends PureComponent {
     }
   }
 
-  fullZoomOnPointer = (rect, x, y) => {
-    const { minZoom, maxZoom } = this.props
-    let { zoom, posX, posY } = this.state
+  /**
+   * Applies a full-zoom on the specified X and Y positions
+   * @param  {DOMRect} rect Main element on which transformations will apply
+   * @param  {Number}  x    Relative (rect-based) X position in pixels
+   * @param  {Number}  y    Relative (rect-based) Y position in pixels
+   */
+  fullZoomInOnPosition = (rect, x, y) => {
+    const { maxZoom } = this.props
 
-    // Set the new zoom value
-    zoom = (zoom === minZoom ? maxZoom : minZoom)
-
-    if (zoom === maxZoom) {
-      [ posX, posY ] = this.getNewPosition(rect, x, y, zoom)
-    } else {
-      // Reset to original position
-      [ posX, posY ] = [this.constructor.defaultState.posX, this.constructor.defaultState.posY]
-    }
+    const zoom = maxZoom
+    const [ posX, posY ] = this.getNewPosition(rect, x, y, zoom)
 
     this.setState({ zoom, posX, posY, useTransition: true })
   }
 
+  /**
+   * Moves the element by incrementing its position with given X and Y values.
+   * @param  {DOMRect} rect   Main element on which transformations will apply
+   * @param  {Number}  shiftX Position change to apply on X axis in pixels
+   * @param  {Number}  shiftY Position change to apply on Y axis in pixels
+   */
   move = (rect, shiftX, shiftY) => {
     const { leftBoundary, rightBoundary, topBoundary, bottomBoundary } = this.props
     let { posX, posY } = this.state
@@ -189,6 +235,10 @@ export default class PrismaZoom extends PureComponent {
     this.setState({ posX, posY, cursor, useTransition: false })
   }
 
+  /**
+   * Event handler on scroll.
+   * @param  {MouseEvent} event Mouse event
+   */
   handleMouseWheel = event => {
     event.preventDefault()
     const { minZoom, maxZoom, scrollVelocity } = this.props
@@ -220,19 +270,35 @@ export default class PrismaZoom extends PureComponent {
     this.setState({ zoom, posX, posY, useTransition: false })
   }
 
+  /**
+   * Event handler on double click.
+   * @param  {MouseEvent} event Mouse event
+   */
   handleDoubleClick = event => {
     event.preventDefault()
 
     const rect = event.currentTarget.getBoundingClientRect()
-    this.fullZoomOnPointer(rect, event.pageX, event.pageY)
+    if (this.state.zoom === this.props.minZoom) {
+      this.fullZoomInOnPosition(rect, event.pageX, event.pageY)
+    } else {
+      this.reset()
+    }
   }
 
+  /**
+   * Event handler on mouse down.
+   * @param  {MouseEvent} event Mouse event
+   */
   handleMouseStart = event => {
     event.preventDefault()
 
     this.lastCursor = { posX: event.pageX, posY: event.pageY }
   }
 
+  /**
+   * Event handler on mouse move.
+   * @param  {MouseEvent} event Mouse event
+   */
   handleMouseMove = event => {
     event.preventDefault()
 
@@ -249,6 +315,10 @@ export default class PrismaZoom extends PureComponent {
     this.lastCursor = { posX, posY }
   }
 
+  /**
+   * Event handler on mouse up or mouse out.
+   * @param  {MouseEvent} event Mouse event
+   */
   handleMouseStop = event => {
     event.preventDefault()
 
@@ -256,6 +326,11 @@ export default class PrismaZoom extends PureComponent {
     this.setState({ cursor: 'auto' })
   }
 
+  /**
+   * Event handler on touch start.
+   * Zoom-in at the maximum scale if a double tap is detected.
+   * @param  {TouchEvent} event Touch event
+   */
   handleTouchStart = event => {
     event.preventDefault()
 
@@ -266,7 +341,11 @@ export default class PrismaZoom extends PureComponent {
       const touchTime = new Date().getTime()
       if (touchTime - this.lastTouchTime < doubleTouchMaxDelay && touchTime - this.lastDoubleTapTime > doubleTouchMaxDelay) {
         const rect = event.currentTarget.getBoundingClientRect()
-        this.fullZoomOnPointer(rect, posX, posY)
+        if (this.state.zoom === this.props.minZoom) {
+          this.fullZoomInOnPosition(rect, posX, posY)
+        } else {
+          this.reset()
+        }
         this.lastDoubleTapTime = touchTime
       }
 
@@ -276,6 +355,11 @@ export default class PrismaZoom extends PureComponent {
     this.lastTouch = { posX, posY }
   }
 
+  /**
+   * Event handler on touch move.
+   * Either move the element using one finger or zoom-in with a two finger pinch.
+   * @param  {TouchEvent} event Touch move
+   */
   handleTouchMove = event => {
     event.preventDefault()
     const { maxZoom, minZoom } = this.props
@@ -320,11 +404,15 @@ export default class PrismaZoom extends PureComponent {
       }
 
       // Save data for the next move
-      this.lastTouchDistance = distance
       this.lastTouch = { posX: pos1X, posY: pos1Y }
+      this.lastTouchDistance = distance
     }
   }
 
+  /**
+   * Event handler on touch end or touch cancel.
+   * @param  {TouchEvent} event Touch move
+   */
   handleTouchStop = event => {
     event.preventDefault()
 
@@ -332,7 +420,11 @@ export default class PrismaZoom extends PureComponent {
     this.lastTouchDistance = null
   }
 
-  zoomUp = value => {
+  /**
+   * Increments the zoom with the given value.
+   * @param  {Number} value Zoom value
+   */
+  zoomIn = value => {
     const { maxZoom } = this.props
     let { zoom, posX, posY } = this.state
 
@@ -348,7 +440,11 @@ export default class PrismaZoom extends PureComponent {
     this.setState({ zoom, posX, posY, useTransition: true })
   }
 
-  zoomDown = value => {
+  /**
+   * Decrements the zoom with the given value.
+   * @param  {Number} value Zoom value
+   */
+  zoomOut = value => {
     const { minZoom } = this.props
     let { zoom, posX, posY } = this.state
 
@@ -364,6 +460,13 @@ export default class PrismaZoom extends PureComponent {
     this.setState({ zoom, posX, posY, useTransition: true })
   }
 
+  /**
+   * Zoom-in on the specified zone with the given relative coordinates and dimensions.
+   * @param  {Number} relX      Relative X position of the zone left-top corner in pixels
+   * @param  {Number} relY      Relative Y position of the zone left-top corner in pixels
+   * @param  {Number} relWidth  Zone width in pixels
+   * @param  {Number} relHeight Zone height in pixels
+   */
   zoomToZone = (relX, relY, relWidth, relHeight) => {
     const { maxZoom, leftBoundary, rightBoundary, topBoundary, bottomBoundary } = this.props
     let { zoom, posX, posY } = this.state
@@ -385,12 +488,25 @@ export default class PrismaZoom extends PureComponent {
     this.setState({ zoom, posX, posY, useTransition: true })
   }
 
+  /**
+   * Resets the component to its initial state.
+   */
   reset = () => {
     this.setState(this.constructor.defaultState)
   }
 
+  /**
+   * Returns the current zoom value.
+   * @return {Number} Zoom value
+   */
   getZoom = () => {
     return this.state.zoom
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (this.props.onZoomChange && this.state.zoom !== prevState.zoom) {
+      this.props.onZoomChange(this.state.zoom)
+    }
   }
 
   render () {
