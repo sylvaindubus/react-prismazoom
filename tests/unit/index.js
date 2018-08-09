@@ -1,21 +1,39 @@
 import React from 'react'
-import { shallow, render, configure } from 'enzyme'
+import { mount, render, configure } from 'enzyme'
+import { JSDOM } from 'jsdom'
 import Adapter from 'enzyme-adapter-react-16'
 
 import PrismaZoom from '../../src/index.js'
 
 configure({ adapter: new Adapter() })
 
-const { describe, it } = intern.getPlugin('interface.bdd')
+const { describe, it, beforeEach } = intern.getPlugin('interface.bdd')
 const { expect } = intern.getPlugin('chai')
+
+const documentHTML = '<!doctype html><html><head></head><body><div></div></body></html>'
+const jsdom = new JSDOM(documentHTML, { pretendToBeVisual: true })
+global.window = jsdom.window
+global.document = jsdom.window.document
+global.navigator = { userAgent: 'node.js' }
+
+Object.defineProperty(document.body, 'clientWidth', { get: () => ( 1440 ) })
+Object.defineProperty(document.body, 'clientHeight', { get: () => ( 900 ) })
 
 describe('components', () => {
   describe('PrismaZoom', () => {
-    const component = shallow(<PrismaZoom><p></p></PrismaZoom>)
+    const props = {
+      minZoom: 1,
+      maxZoom: 5
+    }
+    const component = mount(<PrismaZoom {...props}><div style={{width: 640, height: 360}}></div></PrismaZoom>)
     const instance = component.instance()
+    const defaultState = instance.state
+
+    beforeEach(() => {
+      component.setState(defaultState)
+    })
 
     it('renders correctly', () => {
-      expect(component.type()).to.equal('div')
       expect(component.prop('className')).to.equal(null)
       expect(component.state('zoom')).to.equal(1)
     })
@@ -47,6 +65,53 @@ describe('components', () => {
       })
       it('returns adapted cursor if element can be panned on both directions', () => {
         expect(instance.getCursor(true, true)).to.eql('move')
+      })
+    })
+
+    describe('zoomIn', () => {
+      it('increments the zoom value', () => {
+        instance.zoomIn(3)
+        expect(component.state('zoom')).to.equal(4)
+        instance.zoomIn(3)
+        expect(component.state('zoom')).to.equal(props.maxZoom)
+      })
+    })
+
+    describe('zoomOut', () => {
+      it('decrements the zoom value', () => {
+        component.setState({ zoom: props.maxZoom })
+        instance.zoomOut(3)
+        expect(component.state('zoom')).to.equal(2)
+        instance.zoomOut(3)
+        expect(component.state('zoom')).to.equal(props.minZoom)
+      })
+    })
+
+    describe('zoomToZone', () => {
+      it('zoom-in on the specified zone', () => {
+        instance.zoomToZone(400, 10, 230, 340)
+        expect(instance.state).to.eql({
+          zoom: 2.6470588235294117,
+          posX: -1363.235294117647,
+          posY: -476.4705882352941,
+          cursor: 'auto',
+          useTransition: true
+        })
+      })
+    })
+
+    describe('reset', () => {
+      it('resets the state', () => {
+        component.setState({ zoom: 2, useTransition: false })
+        instance.reset()
+        expect(instance.state).to.eql(defaultState)
+      })
+    })
+
+    describe('getZoom', () => {
+      it('returns the current zoom value', () => {
+        component.setState({ zoom: 2 })
+        expect(instance.getZoom()).to.eql(2)
       })
     })
   })
