@@ -19,13 +19,14 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0",
     "start": "webpack-dev-server --mode development",
     "transpile": "babel src -d dist --copy-file",
     "prepublishOnly": "npm run transpile",
     "build": "webpack --mode production",
     "deploy": "gh-pages -d examples/dist",
-    "publish-demo": "npm run build && npm run deploy"
+    "publish-demo": "npm run build && npm run deploy",
+    "test": "intern config='intern.json' || true",
+    "watchTest": "watch 'npm run test' src tests"
   },
   "peerDependencies": {
     "prop-types": "^15.6",
@@ -37,10 +38,13 @@
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.6",
     "babel-loader": "^7.1.5",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^1.0.0",
+    "enzyme": "^3.4.1",
+    "enzyme-adapter-react-16": "^1.2.0",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-loader": "^2.1.0",
@@ -52,10 +56,12 @@
     "file-loader": "^1.1.11",
     "gh-pages": "^1.2.0",
     "html-webpack-plugin": "^3.2.0",
+    "intern": "^4.2.2",
     "prop-types": "^15.6",
     "react": "^16",
     "react-dom": "^16",
     "style-loader": "^0.21.0",
+    "watch": "^1.0.2",
     "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.5"
