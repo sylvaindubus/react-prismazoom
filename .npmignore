@@ -1,5 +1,9 @@
 src
 examples
+tests
 .babelrc
+.eslintrc.json
 .gitignore
+.gitlab-ci.yml
+intern.json
 webpack.config.js
