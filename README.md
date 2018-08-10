@@ -4,8 +4,10 @@
 
 A pan and zoom component for React, using CSS transformations.
 
-Depends only upon prop-types, react and react-dom modules.
+Depends only upon prop-types, react and react-dom modules.  
 Works on both desktop and mobile.
+
+Online demo [here!](https://sylvaindubus.github.io/react-prismazoom/)
 
 ### Zoom features :mag_right:
 * Zoom with the mouse-wheel or a two-finger pinch
