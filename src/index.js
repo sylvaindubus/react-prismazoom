@@ -514,10 +514,11 @@ export default class PrismaZoom extends PureComponent {
 
     const style = {
       ...this.props.style,
-      transform: `translate(${posX}px, ${posY}px) scale(${zoom})`,
+      transform: `translate3d(${posX}px, ${posY}px, 0) scale(${zoom})`,
       transition: (useTransition ? `transform ease-in-out ${animDuration}s` : ''),
       cursor: cursor,
-      touchAction: 'none'
+      touchAction: 'none',
+      willChange: 'transform'
     }
 
     const attr = {
