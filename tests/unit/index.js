@@ -16,13 +16,11 @@ global.window = jsdom.window
 global.document = jsdom.window.document
 global.navigator = { userAgent: 'node.js' }
 
-Object.defineProperty(document.body, 'clientWidth', { get: () => ( 1440 ) })
-Object.defineProperty(document.body, 'clientHeight', { get: () => ( 900 ) })
+const [containerWidth, containerHeight] = [1440, 600]
+const [targetWidth, targetHeight] = [640, 360]
 
 describe('components', () => {
   describe('PrismaZoom', () => {
-    const targetWidth = 640
-    const targetHeight = 360
     const targetRect = {
       width: targetWidth,
       height: targetHeight,
@@ -41,7 +39,12 @@ describe('components', () => {
     const defaultState = instance.state
 
     beforeEach(() => {
+      // Re-initialize default state
       component.setState(defaultState)
+
+      // Override clientWidth and clientHeight getters
+      Object.defineProperty(document.body, 'clientWidth', { get: () => ( containerWidth ), configurable: true })
+      Object.defineProperty(document.body, 'clientHeight', { get: () => ( containerHeight ), configurable: true })
     })
 
     it('renders correctly', () => {
@@ -104,8 +107,13 @@ describe('components', () => {
     })
 
     describe('move', () => {
+      let containerRect
+      beforeEach(() => {
+        containerRect = { width: containerWidth, height: containerHeight, left: 0, top: 0, bottom: containerHeight, right: containerWidth }
+      })
+
       it('does not changes position if panning is impossible', () => {
-        instance.move(targetRect, 20, 20)
+        instance.move(targetRect, 20, 20, containerRect)
         expect(instance.state).to.eql({
           zoom: 1, posX: 0, posY: 0, cursor: 'auto', useTransition: false
         })
@@ -115,7 +123,7 @@ describe('components', () => {
         const zoom = 3
         const rect = { width: 1920, height: 1080, left: 0, top: 0, bottom: 1080, right: 1920 }
         component.setState({ zoom: zoom, posX: 640, posY: 360 })
-        instance.move(rect, -20, -20)
+        instance.move(rect, -20, -20, containerRect)
         expect(instance.state).to.eql({
           zoom: zoom, posX: 620, posY: 340, cursor: 'move', useTransition: false
         })
@@ -125,9 +133,33 @@ describe('components', () => {
         const zoom = 3
         const rect = { width: 1920, height: 1080, left: -10, top: -10, bottom: 1070, right: 1910 }
         component.setState({ zoom: zoom, posX: 630, posY: 350 })
-        instance.move(rect, 20, 20)
+        instance.move(rect, 20, 20, containerRect)
         expect(instance.state).to.eql({
           zoom: zoom, posX: 640, posY: 360, cursor: 'move', useTransition: false
+        })
+      })
+
+      it('changes position on X axis only', () => {
+        // Simulates a twice higher container
+        Object.defineProperty(document.body, 'clientHeight', { get: () => ( containerHeight * 2 ), configurable: true })
+        containerRect = { ...containerRect, height: containerHeight * 2, bottom: containerHeight * 2 }
+
+        const zoom = 3
+        const rect = { width: 1920, height: 1080, left: -10, top: -10, bottom: 1070, right: 1910 }
+        component.setState({ zoom: zoom, posX: 630, posY: 350 })
+        instance.move(rect, -20, -20, containerRect)
+        expect(instance.state).to.eql({
+          zoom: zoom, posX: 610, posY: 350, cursor: 'ew-resize', useTransition: false
+        })
+      })
+
+      it('changes position on Y axis only', () => {
+        const zoom = 2
+        const rect = { width: 1280, height: 720, left: -10, top: -10, bottom: 710, right: 1270 }
+        component.setState({ zoom: zoom, posX: 640, posY: 350 })
+        instance.move(rect, -20, -20, containerRect)
+        expect(instance.state).to.eql({
+          zoom: zoom, posX: 640, posY: 330, cursor: 'ns-resize', useTransition: false
         })
       })
     })
@@ -155,7 +187,7 @@ describe('components', () => {
       it('zoom-in on the specified zone', () => {
         instance.zoomToZone(400, 10, 230, 340)
         expect(instance.state).to.eql({
-          zoom: 2.6470588235294117, posX: -1363.235294117647, posY: -476.4705882352941, cursor: 'auto', useTransition: true
+          zoom: 1.7647058823529411, posX: -908.8235294117646, posY: -317.6470588235294, cursor: 'auto', useTransition: true
         })
       })
     })

@@ -180,9 +180,14 @@ export default class PrismaZoom extends PureComponent {
    * @param  {Number}  shiftX Position change to apply on X axis in pixels
    * @param  {Number}  shiftY Position change to apply on Y axis in pixels
    */
-  move = (rect, shiftX, shiftY) => {
+  move = (rect, shiftX, shiftY, parentRect = null) => {
     const { leftBoundary, rightBoundary, topBoundary, bottomBoundary } = this.props
     let { posX, posY } = this.state
+
+    // Get container coordinates
+    if (!parentRect) {
+      parentRect = this.refs.layout.parentNode.getBoundingClientRect()
+    }
 
     // Get horizontal limits using specified horizontal boundaries
     const [leftLimit, rightLimit] = [
@@ -190,21 +195,18 @@ export default class PrismaZoom extends PureComponent {
       document.body.clientWidth - rightBoundary
     ]
 
-    let canMoveOnX = false
-    // Check if the element is larger than the layout zone
-    if (rect.width > (rightLimit - leftLimit)) {
-      // If the element is bigger than its container, allow moves
-      canMoveOnX = true
-      // Limit the shift considering boudaries
+    const [isLarger, isOutLeftBoundary, isOutRightBoundary] = [
+      // Check if the element is larger than its container
+      (rect.width > (rightLimit - leftLimit)),
+      // Check if the element is out its container left boundary
+      (shiftX > 0 && (rect.left - parentRect.left) < 0),
+      // Check if the element is out its container right boundary
+      (shiftX < 0 && (rect.right - parentRect.right) > 0)
+    ]
+
+    const canMoveOnX = isLarger || isOutLeftBoundary || isOutRightBoundary
+    if (canMoveOnX) {
       posX += this.getLimitedShift(shiftX, leftLimit, rightLimit, rect.left, rect.right)
-    } else if ((posX > 0 && shiftX < 0) || (posX < 0 && shiftX > 0)) {
-      // If the element is smaller than its container, allow only centering moves
-      canMoveOnX = true
-      if (Math.abs(posX) > 5) {
-        posX += shiftX
-      } else {
-        posX = 0
-      }
     }
 
     // Get vertical limits using specified vertical boundaries
@@ -213,21 +215,18 @@ export default class PrismaZoom extends PureComponent {
       document.body.clientHeight - bottomBoundary
     ]
 
-    let canMoveOnY = false
-    // Check if the element is higher than the layout zone
-    if (rect.height > (bottomLimit - topLimit)) {
-      // If the element is bigger than its container, allow moves
-      canMoveOnY = true
-      // Limit the shift considering boudaries
+    const [isHigher, isOutTopBoundary, isOutBottomBoundary] = [
+      // Check if the element is higher than its container
+      (rect.height > (bottomLimit - topLimit)),
+      // Check if the element is out its container top boundary
+      (shiftY > 0 && (rect.top - parentRect.top) < 0),
+      // Check if the element is out its container bottom boundary
+      (shiftY < 0 && (rect.bottom - parentRect.bottom) > 0)
+    ]
+
+    let canMoveOnY = isHigher || isOutTopBoundary || isOutBottomBoundary
+    if (canMoveOnY) {
       posY += this.getLimitedShift(shiftY, topLimit, bottomLimit, rect.top, rect.bottom)
-    } else if ((posY > 0 && shiftY < 0) || (posY < 0 && shiftY > 0)) {
-      // If the element is smaller than its container, allow only centering moves
-      canMoveOnY = true
-      if (Math.abs(posY) > 5) {
-        posY += shiftY
-      } else {
-        posY = 0
-      }
     }
 
     const cursor = this.getCursor(canMoveOnX, canMoveOnY)
