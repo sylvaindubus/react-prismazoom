@@ -41,6 +41,18 @@ Go to http://localhost:1664.
 
 **Note:** sources of this example can be found in `example/src`.
 
+### Run unit tests
+
+You can either run all tests at once:
+```bash
+$ npm test
+```
+
+Or run tests each time a change on source files occured:
+```bash
+$ npm run watchTest
+```
+
 ## Usage
 
 ### Implementation
