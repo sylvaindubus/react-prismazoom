@@ -30,7 +30,7 @@ export default class PrismaZoom extends PureComponent {
     // Maximum zoom ratio
     maxZoom: 5,
     // Zoom increment or decrement on each scroll wheel detection
-    scrollVelocity: 0.1,
+    scrollVelocity: 0.2,
     // Function called each time the zoom value changes
     onZoomChange: null,
     // Left screen-relative boundary, used to limit panning zone
@@ -266,7 +266,7 @@ export default class PrismaZoom extends PureComponent {
       }
     }
 
-    this.setState({ zoom, posX, posY, useTransition: false })
+    this.setState({ zoom, posX, posY, useTransition: true })
   }
 
   /**
