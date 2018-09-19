@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.0] - 2018-09-19
+- Add movement deceleration on mouse up and touch end events
+- Greatly improve example project
+- Fix blur effect on mouse wheel zoom
+
 ## [1.0.3] - 2018-08-10
 - Add unit tests using [Intern](https://theintern.io/)
 - Improve performances with translate3d and will-change CSS properties
