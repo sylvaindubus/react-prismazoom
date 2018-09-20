@@ -16,7 +16,7 @@ export default class PrismaZoom extends PureComponent {
     bottomBoundary: PropTypes.number,
     animDuration: PropTypes.number,
     doubleTouchMaxDelay: PropTypes.number,
-    deceleratingMoveDuration: PropTypes.number
+    decelerationDuration: PropTypes.number
   }
 
   static defaultProps = {
@@ -45,7 +45,7 @@ export default class PrismaZoom extends PureComponent {
     // Max delay between two taps to consider a double tap (in milliseconds)
     doubleTouchMaxDelay: 300,
     // Decelerating movement duration after a mouse up or a touch end event (in milliseconds)
-    deceleratingMoveDuration: 750
+    decelerationDuration: 750
   }
 
   static defaultState = {
@@ -74,7 +74,10 @@ export default class PrismaZoom extends PureComponent {
     // Last request animation frame identifier
     this.lastRequestAnimationId = null
 
-    this.state = {...this.constructor.defaultState}
+    this.state = {
+      ...this.constructor.defaultState,
+      transitionDuration: props.animDuration
+    }
   }
 
   /**
@@ -242,7 +245,7 @@ export default class PrismaZoom extends PureComponent {
    * @param  {Number} lastShiftOnX Last shift on the X axis in pixels
    * @param  {Number} lastShiftOnY Last shift on the Y axis in pixels
    */
-  startDeceleratingMovement = (lastShiftOnX, lastShiftOnY) => {
+  startDeceleration = (lastShiftOnX, lastShiftOnY) => {
     let startTimestamp = null
 
     const move = timestamp => {
@@ -252,7 +255,7 @@ export default class PrismaZoom extends PureComponent {
       const progress = timestamp - startTimestamp
 
       // Calculates the ratio to apply on the move (used to create a non-linear deceleration)
-      const ratio = (this.props.deceleratingMoveDuration - progress) / this.props.deceleratingMoveDuration
+      const ratio = (this.props.decelerationDuration - progress) / this.props.decelerationDuration
 
       const [shiftX, shiftY] = [
         lastShiftOnX * ratio,
@@ -260,7 +263,7 @@ export default class PrismaZoom extends PureComponent {
       ]
 
       // Continue animation only if time has not expired and if there is still some movement (more than 1 pixel on one axis)
-      if (progress < this.props.deceleratingMoveDuration && Math.max(Math.abs(shiftX), Math.abs(shiftY)) > 1) {
+      if (progress < this.props.decelerationDuration && Math.max(Math.abs(shiftX), Math.abs(shiftY)) > 1) {
         this.move(shiftX, shiftY, 0)
         this.lastRequestAnimationId = requestAnimationFrame(move)
       } else {
@@ -302,7 +305,7 @@ export default class PrismaZoom extends PureComponent {
       }
     }
 
-    this.setState({ zoom, posX, posY, transitionDuration: 0 })
+    this.setState({ zoom, posX, posY, transitionDuration: 0.05 })
   }
 
   /**
@@ -362,7 +365,7 @@ export default class PrismaZoom extends PureComponent {
 
     if (this.lastShift) {
       // Use the last shift to make a decelerating movement effect
-      this.startDeceleratingMovement(this.lastShift.x, this.lastShift.y)
+      this.startDeceleration(this.lastShift.x, this.lastShift.y)
       this.lastShift = null
     }
 
@@ -447,7 +450,7 @@ export default class PrismaZoom extends PureComponent {
         const [centerX, centerY] = [(pos1X + pos2X) / 2, (pos1Y + pos2Y) / 2]
         const [posX, posY] = this.getNewPosition(centerX, centerY, zoom)
 
-        this.setState({ zoom, posX, posY, transitionDuration: 0.05 })
+        this.setState({ zoom, posX, posY, transitionDuration: 0 })
       }
 
       // Save data for the next move
@@ -465,7 +468,7 @@ export default class PrismaZoom extends PureComponent {
 
     if (this.lastShift) {
       // Use the last shift to make a decelerating movement effect
-      this.startDeceleratingMovement(this.lastShift.x, this.lastShift.y)
+      this.startDeceleration(this.lastShift.x, this.lastShift.y)
       this.lastShift = null
     }
 
@@ -545,7 +548,10 @@ export default class PrismaZoom extends PureComponent {
    * Resets the component to its initial state.
    */
   reset = () => {
-    this.setState(this.constructor.defaultState)
+    this.setState({
+      ...this.constructor.defaultState,
+      transitionDuration: this.props.animDuration
+    })
   }
 
   /**
