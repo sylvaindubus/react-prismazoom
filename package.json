@@ -1,6 +1,6 @@
 {
   "name": "react-prismazoom",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A pan and zoom component for React, using CSS transformations.",
   "author": "Sylvain DUBUS <svn.dbs@gmail.com>",
   "license": "ISC",

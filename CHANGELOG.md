@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.1.1] - 2018-09-20
+- Fix another bug on mouse wheel zoom
+
 ## [1.1.0] - 2018-09-19
 - Add movement deceleration on mouse up and touch end events
 - Greatly improve example project
