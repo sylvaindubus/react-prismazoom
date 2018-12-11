@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.1.2] - 2018-12-11
+- Remove preventDefault from touchStop event
+
 ## [1.1.1] - 2018-09-20
 - Fix another bug on mouse wheel zoom
 
