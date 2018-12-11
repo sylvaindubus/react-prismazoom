@@ -463,9 +463,7 @@ export default class PrismaZoom extends PureComponent {
    * Event handler on touch end or touch cancel.
    * @param  {TouchEvent} event Touch move
    */
-  handleTouchStop = event => {
-    event.preventDefault()
-
+  handleTouchStop = () => {
     if (this.lastShift) {
       // Use the last shift to make a decelerating movement effect
       this.startDeceleration(this.lastShift.x, this.lastShift.y)
