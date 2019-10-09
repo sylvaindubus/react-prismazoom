@@ -13,15 +13,19 @@ class App extends Component {
       zoom: 1
     }
   }
+
   onZoomChange = zoom => {
     this.setState({ zoom })
   }
+
   onClickOnZoomOut = event => {
     this.refs.prismaZoom.zoomOut(1)
   }
+
   onClickOnZoomIn = event => {
     this.refs.prismaZoom.zoomIn(1)
   }
+
   onDoubleClickOnCard = event => {
     event.preventDefault()
     event.stopPropagation()
@@ -47,6 +51,7 @@ class App extends Component {
     ]
     prismaZoom.zoomToZone(relX, relY, relWidth, relHeight)
   }
+
   render () {
     return (
       <div className="App">

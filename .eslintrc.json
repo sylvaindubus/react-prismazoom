@@ -4,7 +4,8 @@
   "plugins": ["react"],
   "rules": {
     "react/jsx-uses-react": "error",
-    "react/jsx-uses-vars": "error"
+    "react/jsx-uses-vars": "error",
+    "array-bracket-spacing": 0
   },
   "env": {
     "browser": true

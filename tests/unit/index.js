@@ -1,5 +1,7 @@
+/* global intern */
+
 import React from 'react'
-import { mount, render, configure } from 'enzyme'
+import { mount, configure } from 'enzyme'
 import { JSDOM } from 'jsdom'
 import Adapter from 'enzyme-adapter-react-16'
 
@@ -43,8 +45,8 @@ describe('components', () => {
       component.setState(defaultState)
 
       // Override clientWidth and clientHeight getters
-      Object.defineProperty(document.body, 'clientWidth', { get: () => ( containerWidth ), configurable: true })
-      Object.defineProperty(document.body, 'clientHeight', { get: () => ( containerHeight ), configurable: true })
+      Object.defineProperty(document.body, 'clientWidth', { get: () => containerWidth, configurable: true })
+      Object.defineProperty(document.body, 'clientHeight', { get: () => containerHeight, configurable: true })
     })
 
     it('renders correctly', () => {
@@ -141,7 +143,7 @@ describe('components', () => {
 
       it('changes position on X axis only', () => {
         // Simulates a twice higher container
-        Object.defineProperty(document.body, 'clientHeight', { get: () => ( containerHeight * 2 ), configurable: true })
+        Object.defineProperty(document.body, 'clientHeight', { get: () => containerHeight * 2, configurable: true })
         containerRect = { ...containerRect, height: containerHeight * 2, bottom: containerHeight * 2 }
 
         const zoom = 3

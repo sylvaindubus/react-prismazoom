@@ -230,7 +230,7 @@ export default class PrismaZoom extends PureComponent {
       (shiftY < 0 && (rect.bottom - parentRect.bottom) > 0)
     ]
 
-    let canMoveOnY = isHigher || isOutTopBoundary || isOutBottomBoundary
+    const canMoveOnY = isHigher || isOutTopBoundary || isOutBottomBoundary
     if (canMoveOnY) {
       posY += this.getLimitedShift(shiftY, topLimit, bottomLimit, rect.top, rect.bottom)
     }

@@ -4,7 +4,6 @@ stages:
   - tests
   - publish
 
-
 before_script:
   - echo -e "\n"$NPMRC_REGISTRY_KEY >> $CI_PROJECT_DIR/.npmrc
   - sed -i -e '0,/react-prismazoom/s//@prismamedia\/react-prismazoom/' package.json
