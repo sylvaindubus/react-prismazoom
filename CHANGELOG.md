@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.1.3] - 2019-10-09
+- Update some dependencies, clean code
+
 ## [1.1.2] - 2018-12-11
 - Remove preventDefault from touchStop event
 
