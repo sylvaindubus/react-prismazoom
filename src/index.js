@@ -100,7 +100,7 @@ export default class PrismaZoom extends PureComponent {
 
       // Retrieve rectangle dimensions and mouse position
       const [centerX, centerY] = [rect.width / 2, rect.height / 2]
-      const [relativeX, relativeY] = [x - rect.left, y - rect.top]
+      const [relativeX, relativeY] = [x - rect.left - window.pageXOffset, y - rect.top - window.pageYOffset]
 
       // If we are zooming down, we must try to center to mouse position
       const [absX, absY] = [(centerX - relativeX) / prevZoom, (centerY - relativeY) / prevZoom]
