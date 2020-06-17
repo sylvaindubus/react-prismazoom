@@ -127,7 +127,8 @@ export default class PrismaZoom extends PureComponent {
    * @param  {Number} maxElement Right or bottom element position in pixels
    * @return {Number}            Narrowed shift
    */
-  getLimitedShift = (shift, minLimit, maxLimit, minElement, maxElement) => {
+  getLimitedShift = (shift, minLimit, maxLimit, minElement, maxElement, vertical = false) => {
+    // return shift
     if (shift > 0) {
       if (minElement > minLimit) {
         // Forbid move if we are moving to left or top while we are already out minimum boudaries
@@ -137,9 +138,10 @@ export default class PrismaZoom extends PureComponent {
         return minLimit - minElement
       }
     } else if (shift < 0) {
+      // if (vertical) console.log({ shift, minLimit, maxLimit, minElement, maxElement });
       if (maxElement < maxLimit) {
         // Forbid move if we are moving to right or bottom while we are already out maximum boudaries
-        return 0
+        // return 0
       } else if (maxElement + shift < maxLimit) {
         // Lower the shift if we are going out boundaries
         return maxLimit - maxElement
@@ -201,38 +203,45 @@ export default class PrismaZoom extends PureComponent {
       document.body.clientWidth - rightBoundary
     ]
 
-    const [isLarger, isOutLeftBoundary, isOutRightBoundary] = [
+    const [isOutLeftBoundary, isOutRightBoundary] = [
       // Check if the element is larger than its container
-      (rect.width > (rightLimit - leftLimit)),
+      // (rect.width > (rightLimit - leftLimit)),
       // Check if the element is out its container left boundary
       (shiftX > 0 && (rect.left - parentRect.left) < 0),
       // Check if the element is out its container right boundary
       (shiftX < 0 && (rect.right - parentRect.right) > 0)
     ]
 
-    const canMoveOnX = isLarger || isOutLeftBoundary || isOutRightBoundary
+    // const canMoveOnX = isLarger || isOutLeftBoundary || isOutRightBoundary
+    const canMoveOnX = isOutLeftBoundary || isOutRightBoundary
     if (canMoveOnX) {
-      posX += this.getLimitedShift(shiftX, leftLimit, rightLimit, rect.left, rect.right)
+      // posX += this.getLimitedShift(shiftX, leftLimit, rightLimit, rect.left, rect.right)
+      posX += shiftX
     }
 
     // Get vertical limits using specified vertical boundaries
     const [topLimit, bottomLimit] = [
       topBoundary,
       document.body.clientHeight - bottomBoundary
+      // parentRect.top,
+      // parentRect.bottom
+      // parentRect.height
     ]
 
-    const [isHigher, isOutTopBoundary, isOutBottomBoundary] = [
+    const [isOutTopBoundary, isOutBottomBoundary] = [
       // Check if the element is higher than its container
-      (rect.height > (bottomLimit - topLimit)),
+      // (rect.height > (bottomLimit - topLimit)),
       // Check if the element is out its container top boundary
-      (shiftY > 0 && (rect.top - parentRect.top) < 0),
+      (shiftY > 0 && rect.top < parentRect.top),
       // Check if the element is out its container bottom boundary
-      (shiftY < 0 && (rect.bottom - parentRect.bottom) > 0)
+      (shiftY < 0 && rect.bottom > parentRect.bottom)
     ]
 
-    const canMoveOnY = isHigher || isOutTopBoundary || isOutBottomBoundary
+    console.log('-', rect, parentRect, { isOutTopBoundary, isOutBottomBoundary })
+    const canMoveOnY = isOutTopBoundary || isOutBottomBoundary
     if (canMoveOnY) {
-      posY += this.getLimitedShift(shiftY, topLimit, bottomLimit, rect.top, rect.bottom)
+      // posY += this.getLimitedShift(shiftY, topLimit, bottomLimit, rect.top, rect.bottom, true)
+      posY += shiftY
     }
 
     const cursor = this.getCursor(canMoveOnX, canMoveOnY)
