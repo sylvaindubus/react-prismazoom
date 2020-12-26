@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.1.4] - 2020-12-25
+- Added onPanChange callback method
+
 ## [1.1.3] - 2019-10-09
 - Update some dependencies, clean code
 
