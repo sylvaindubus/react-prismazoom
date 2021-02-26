@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.0] - 2021-02-26
+- Update all dependencies
+- Rework on the example page
+- Improve mousewheel zoom
+- Fix and improve unit tests
+- Fix chrome warning during zoom
+- Change some eslint and babel rules
+- Improve reference handling
+
 ## [1.1.5] - 2021-02-26
 - Added onPanChange callback method (thanks Frozen-byte)
 

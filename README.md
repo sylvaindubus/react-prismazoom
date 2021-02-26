@@ -19,6 +19,11 @@ Online demo [here!](https://sylvaindubus.github.io/react-prismazoom/)
 * Intuitive panning depending on available space when zoomed-in
 * Adjusts cursor style to indicate in which direction the element can be moved
 
+## Breaking changes on v2
+
+* The package now requires React v16.3 or higher (in order to use react references)
+* The zoom feature through gestures or mousewheel got some improvements to react better with all devices. You may need to adjust the `scrollVelocity` property passed to the component in order to keep the same effect.
+
 ## Installation
 
 ### Install the component
