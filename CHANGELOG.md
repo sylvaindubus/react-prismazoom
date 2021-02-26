@@ -1,7 +1,10 @@
 # Changelog
 
+## [1.1.5] - 2021-02-26
+- Added onPanChange callback method (thanks Frozen-byte)
+
 ## [1.1.4] - 2020-12-25
-- Added onPanChange callback method
+- Fix calculating absolute position (thanks sbekaert)
 
 ## [1.1.3] - 2019-10-09
 - Update some dependencies, clean code
