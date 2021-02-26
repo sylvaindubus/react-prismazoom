@@ -288,20 +288,13 @@ export default class PrismaZoom extends PureComponent {
     const { minZoom, maxZoom, scrollVelocity } = this.props
     let { zoom, posX, posY } = this.state
 
-    // Keep the previous zoom value
-    const prevZoom = zoom
+    // Use the scroll event delta to determine the zoom velocity
+    const velocity = - event.deltaY * scrollVelocity / 100
 
-    // Determine if we are increasing or decreasing the zoom
-    const increaseZoom = event.deltaY < 0
+    // Set the new zoom level
+    zoom = Math.max(Math.min(zoom + velocity, maxZoom), minZoom)
 
-    // Set the new zoom value
-    if (increaseZoom) {
-      zoom = (zoom + scrollVelocity < maxZoom ? zoom + scrollVelocity : maxZoom)
-    } else {
-      zoom = (zoom - scrollVelocity > minZoom ? zoom - scrollVelocity : minZoom)
-    }
-
-    if (zoom !== prevZoom) {
+    if (zoom !== this.state.zoom) {
       if (zoom !== minZoom) {
         [ posX, posY ] = this.getNewPosition(event.pageX, event.pageY, zoom)
       } else {
