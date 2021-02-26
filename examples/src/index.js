@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import { render } from 'react-dom'
 
 import PrismaZoom from '../../src'
@@ -9,6 +9,7 @@ import './styles.css'
 class App extends Component {
   constructor (props) {
     super(props)
+    this.prismaZoom = createRef()
     this.state = {
       zoom: 1,
       posX: 0,
@@ -25,25 +26,24 @@ class App extends Component {
   }
 
   onClickOnZoomOut = event => {
-    this.refs.prismaZoom.zoomOut(1)
+    this.prismaZoom.current.zoomOut(1)
   }
 
   onClickOnZoomIn = event => {
-    this.refs.prismaZoom.zoomIn(1)
+    this.prismaZoom.current.zoomIn(1)
   }
 
   onDoubleClickOnCard = event => {
     event.preventDefault()
     event.stopPropagation()
 
-    const prismaZoom = this.refs.prismaZoom
     const zoneRect = event.currentTarget.getBoundingClientRect()
     const layoutRect = event.currentTarget.parentNode.getBoundingClientRect()
 
-    const zoom = prismaZoom.getZoom()
+    const zoom = this.prismaZoom.current.getZoom()
 
     if (zoom > 1) {
-      prismaZoom.reset()
+      this.prismaZoom.current.reset()
       return
     }
 
@@ -55,7 +55,7 @@ class App extends Component {
       zoneRect.width / zoom,
       zoneRect.height / zoom
     ]
-    prismaZoom.zoomToZone(relX, relY, relWidth, relHeight)
+    this.prismaZoom.current.zoomToZone(relX, relY, relWidth, relHeight)
   }
 
   render () {
@@ -66,7 +66,7 @@ class App extends Component {
           <h2>A pan and zoom component for React, using CSS transformations.</h2>
         </header>
         <section className="App-wrapper">
-          <PrismaZoom className="App-zoom" topBoundary={120} onZoomChange={this.onZoomChange} onPanChange={this.onPanChange} ref="prismaZoom">
+          <PrismaZoom className="App-zoom" topBoundary={120} onZoomChange={this.onZoomChange} onPanChange={this.onPanChange} ref={this.prismaZoom}>
             <img className="App-image onDesktop" src={sealHorizontal} alt="A cute seal" />
             <img className="App-image onMobile" src={sealVertical} alt="A cute seal on mobile" />
             <div className="App-card" onDoubleClick={this.onDoubleClickOnCard}>

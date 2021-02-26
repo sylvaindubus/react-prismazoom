@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { PureComponent, createRef } from 'react'
 import PropTypes from 'prop-types'
 
 export default class PrismaZoom extends PureComponent {
@@ -64,6 +64,8 @@ export default class PrismaZoom extends PureComponent {
 
   constructor (props) {
     super(props)
+    // Reference to the main element
+    this.ref = createRef()
     // Last cursor position
     this.lastCursor = null
     // Last touch position
@@ -99,7 +101,7 @@ export default class PrismaZoom extends PureComponent {
 
     if (zoom > prevZoom) {
       // Get container coordinates
-      const rect = this.refs.layout.getBoundingClientRect()
+      const rect = this.ref.current.getBoundingClientRect()
 
       // Retrieve rectangle dimensions and mouse position
       const [centerX, centerY] = [rect.width / 2, rect.height / 2]
@@ -195,8 +197,8 @@ export default class PrismaZoom extends PureComponent {
     let { posX, posY } = this.state
 
     // Get container and container's parent coordinates
-    const rect = this.refs.layout.getBoundingClientRect()
-    const parentRect = this.refs.layout.parentNode.getBoundingClientRect()
+    const rect = this.ref.current.getBoundingClientRect()
+    const parentRect = this.ref.current.parentNode.getBoundingClientRect()
 
     // Get horizontal limits using specified horizontal boundaries
     const [leftLimit, rightLimit] = [
@@ -536,7 +538,7 @@ export default class PrismaZoom extends PureComponent {
     zoom = Math.min(optimalZoomX, optimalZoomY, maxZoom)
 
     // Calculate new position to center the zone
-    const rect = this.refs.layout.getBoundingClientRect()
+    const rect = this.ref.current.getBoundingClientRect()
     const [centerX, centerY] = [(rect.width / prevZoom) / 2, (rect.height / prevZoom) / 2]
     const [zoneCenterX, zoneCenterY] = [relX + (relWidth / 2), relY + (relHeight / 2)]
     posX = (centerX - zoneCenterX) * zoom
@@ -572,6 +574,14 @@ export default class PrismaZoom extends PureComponent {
     }
   }
 
+  componentDidMount () {
+    this.ref.current.addEventListener('wheel', this.handleMouseWheel.bind(this), { passive: false })
+  }
+
+  componentWillUnmount () {
+    this.ref.current.removeEventListener('wheel', this.handleMouseWheel.bind(this))
+  }
+
   render () {
     const { className, children } = this.props
     const { zoom, posX, posY, cursor, transitionDuration } = this.state
@@ -586,10 +596,9 @@ export default class PrismaZoom extends PureComponent {
     }
 
     const attr = {
-      ref: 'layout',
+      ref: this.ref,
       style: style,
       className: className,
-      onWheel: this.handleMouseWheel,
       onDoubleClick: this.handleDoubleClick,
       onMouseDown: this.handleMouseStart,
       onMouseMove: this.handleMouseMove,
