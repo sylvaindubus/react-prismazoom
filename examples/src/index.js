@@ -10,12 +10,18 @@ class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      zoom: 1
+      zoom: 1,
+      posX: 0,
+      posY: 0
     }
   }
 
   onZoomChange = zoom => {
     this.setState({ zoom })
+  }
+
+  onPanChange = pos => {
+    this.setState({ ...pos })
   }
 
   onClickOnZoomOut = event => {
@@ -60,7 +66,7 @@ class App extends Component {
           <h2>A pan and zoom component for React, using CSS transformations.</h2>
         </header>
         <section className="App-wrapper">
-          <PrismaZoom className="App-zoom" topBoundary={120} onZoomChange={this.onZoomChange} ref="prismaZoom">
+          <PrismaZoom className="App-zoom" topBoundary={120} onZoomChange={this.onZoomChange} onPanChange={this.onPanChange} ref="prismaZoom">
             <img className="App-image onDesktop" src={sealHorizontal} alt="A cute seal" />
             <img className="App-image onMobile" src={sealVertical} alt="A cute seal on mobile" />
             <div className="App-card" onDoubleClick={this.onDoubleClickOnCard}>
@@ -76,6 +82,7 @@ class App extends Component {
             <button className="App-button" onClick={this.onClickOnZoomOut}>-</button>
             <span className="App-zoomLabel">{`Zoom: ${parseInt((this.state.zoom * 100))}%`}</span>
             <button className="App-button" onClick={this.onClickOnZoomIn}>+</button>
+            <span className="App-posLabel">{`X: ${parseInt((this.state.posX))} Y: ${parseInt((this.state.posY))}`}</span>
           </div>
         </footer>
       </div>

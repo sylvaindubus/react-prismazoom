@@ -10,6 +10,7 @@ export default class PrismaZoom extends PureComponent {
     maxZoom: PropTypes.number,
     scrollVelocity: PropTypes.number,
     onZoomChange: PropTypes.func,
+    onPanChange: PropTypes.func,
     leftBoundary: PropTypes.number,
     rightBoundary: PropTypes.number,
     topBoundary: PropTypes.number,
@@ -32,6 +33,8 @@ export default class PrismaZoom extends PureComponent {
     scrollVelocity: 0.2,
     // Function called each time the zoom value changes
     onZoomChange: null,
+    // Function called each time the posX or posY value changes (aka images was panned)
+    onPanChange: null,
     // Left screen-relative boundary, used to limit panning zone
     leftBoundary: 0,
     // Right screen-relative boundary, used to limit panning zone
@@ -563,6 +566,9 @@ export default class PrismaZoom extends PureComponent {
   componentDidUpdate (prevProps, prevState) {
     if (this.props.onZoomChange && this.state.zoom !== prevState.zoom) {
       this.props.onZoomChange(this.state.zoom)
+    }
+    if (this.props.onPanChange && (this.state.posX !== prevState.posX || this.state.posY !== prevState.posY)) {
+      this.props.onPanChange({ posX: this.state.posX, posY: this.state.posY })
     }
   }
 
