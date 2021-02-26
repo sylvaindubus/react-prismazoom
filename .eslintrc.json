@@ -1,13 +1,25 @@
 {
-  "extends": ["standard"],
-  "parser": "babel-eslint",
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "parser": "@babel/eslint-parser",
   "plugins": ["react"],
   "rules": {
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
-    "array-bracket-spacing": 0
+    "array-bracket-spacing": 0,
+    "no-trailing-spaces": 1,
+    "no-tabs": 1
   },
+  "ignorePatterns": ["**/dist/**/*.*"],
   "env": {
-    "browser": true
+    "browser": true,
+    "node": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }

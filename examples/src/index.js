@@ -25,11 +25,11 @@ class App extends Component {
     this.setState({ ...pos })
   }
 
-  onClickOnZoomOut = event => {
+  onClickOnZoomOut = () => {
     this.prismaZoom.current.zoomOut(1)
   }
 
-  onClickOnZoomIn = event => {
+  onClickOnZoomIn = () => {
     this.prismaZoom.current.zoomIn(1)
   }
 
@@ -73,7 +73,7 @@ class App extends Component {
               <h3>Double-click on this card ;-)</h3>
               <p>Fur seals are any of nine species of pinnipeds belonging to the subfamily Arctocephalinae in the family Otariidae. They are much more closely related to sea lions than true seals, and share with them external ears (pinnae), relatively long and muscular foreflippers, and the ability to walk on all fours. They are marked by their dense underfur, which made them a long-time object of commercial hunting.</p>
               <p>Eight species belong to the genus Arctocephalus and are found primarily in the Southern Hemisphere, while a ninth species also sometimes called fur seal, the northern fur seal (Callorhinus ursinus), belongs to a different genus and inhabits the North Pacific.</p>
-              <p><a href="https://en.wikipedia.org/wiki/Fur_seal" target="_blank">https://en.wikipedia.org/wiki/Fur_seal</a></p>
+              <p><a href="https://en.wikipedia.org/wiki/Fur_seal" target="_blank" rel="noreferrer">https://en.wikipedia.org/wiki/Fur_seal</a></p>
             </div>
           </PrismaZoom>
         </section>

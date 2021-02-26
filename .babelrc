@@ -1,19 +1,10 @@
 {
   "presets": [
-    "react",
-    ["env", {
-      "targets": {
-        "browsers": [
-          "> 1%",
-          "last 2 versions",
-          "Firefox ESR",
-          "IE >= 11"
-        ]
-      },
-      "useBuiltIns": true
-    }],"stage-0"
+    ["@babel/preset-react"],
+    ["@babel/preset-env", { "targets": "> 0.25%, not dead" }]
   ],
   "plugins": [
-    ["transform-runtime", {"polyfill": false}]
+    ["@babel/plugin-transform-runtime"],
+    ["@babel/plugin-proposal-class-properties"]
   ]
 }
