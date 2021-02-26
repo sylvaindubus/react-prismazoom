@@ -52,7 +52,7 @@ $ npm test
 
 Or run tests each time a change on source files occured:
 ```bash
-$ npm run watchTest
+$ npm run test:watch
 ```
 
 ## Usage

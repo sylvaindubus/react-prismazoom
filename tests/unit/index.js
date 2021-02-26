@@ -19,24 +19,42 @@ global.document = jsdom.window.document
 global.navigator = { userAgent: 'node.js' }
 
 const [containerWidth, containerHeight] = [1440, 600]
-const [targetWidth, targetHeight] = [640, 360]
+
+const mockGetBoudingClientRect = falseData => {
+  window.HTMLElement.prototype.getBoundingClientRect = function () {
+    if (this.className === 'prismaZoom') {
+      // Return data for the PrismaZoom element
+      const data = {
+        width: 640,
+        height: 360,
+        top: 0,
+        left: 0,
+        right: 640,
+        bottom: 360,
+        ...falseData
+      }
+      return data
+    } else {
+      // Return data for the parent element
+      return {
+        width: containerWidth,
+        height: containerHeight,
+        top: 0,
+        left: 0,
+        bottom: containerWidth,
+        right: containerHeight
+      }
+    }
+  }
+}
 
 describe('components', () => {
   describe('PrismaZoom', () => {
-    const targetRect = {
-      width: targetWidth,
-      height: targetHeight,
-      left: 0,
-      top: 0,
-      right: targetWidth,
-      bottom: targetHeight
-    }
-
     const props = {
       minZoom: 1,
       maxZoom: 5
     }
-    const component = mount(<PrismaZoom {...props}><div style={{width: targetWidth, height: targetHeight}}></div></PrismaZoom>)
+    const component = mount(<PrismaZoom className="prismaZoom" {...props}><div></div></PrismaZoom>)
     const instance = component.instance()
     const defaultState = instance.state
 
@@ -50,22 +68,23 @@ describe('components', () => {
     })
 
     it('renders correctly', () => {
-      expect(component.prop('className')).to.equal(null)
+      expect(component.prop('className')).to.equal('prismaZoom')
       expect(component.state('zoom')).to.equal(1)
     })
 
     describe('getNewPosition', () => {
       it('returns initial position if zoom is equal to 1', () => {
-        expect(instance.getNewPosition(targetRect, 5, 5, 1)).to.eql([0, 0])
+        expect(instance.getNewPosition(5, 5, 1)).to.eql([0, 0])
       })
 
       it('returns new position when zoom-in', () => {
-        expect(instance.getNewPosition(targetRect, 20, 20, 1.5)).to.eql([150, 80])
+        mockGetBoudingClientRect()
+        expect(instance.getNewPosition(20, 20, 1.5)).to.eql([150, 80])
       })
 
       it('returns new position when zoom-out', () => {
         component.setState({ zoom: 1.5, posX: 150, posY: 80 })
-        expect(instance.getNewPosition(targetRect, 20, 20, 1.25)).to.eql([75, 40])
+        expect(instance.getNewPosition(20, 20, 1.25)).to.eql([75, 40])
       })
     })
 
@@ -101,68 +120,60 @@ describe('components', () => {
 
     describe('fullZoomInOnPosition', () => {
       it('zoom-in at the maximum value', () => {
-        instance.fullZoomInOnPosition(targetRect, 5, 5)
+        instance.fullZoomInOnPosition(5, 5)
         expect(instance.state).to.eql({
-          zoom: 5, posX: 1260, posY: 700, cursor: 'auto', useTransition: true
+          zoom: 5,
+          posX: 1260,
+          posY: 700,
+          cursor: 'auto',
+          transitionDuration: 0.25
         })
       })
     })
 
     describe('move', () => {
-      let containerRect
-      beforeEach(() => {
-        containerRect = { width: containerWidth, height: containerHeight, left: 0, top: 0, bottom: containerHeight, right: containerWidth }
-      })
-
       it('does not changes position if panning is impossible', () => {
-        instance.move(targetRect, 20, 20, containerRect)
-        expect(instance.state).to.eql({
-          zoom: 1, posX: 0, posY: 0, cursor: 'auto', useTransition: false
-        })
+        instance.move(20, 20, 0)
+        expect(instance.state.zoom).to.eql(1)
+        expect(instance.state.posX).to.eql(0)
+        expect(instance.state.posY).to.eql(0)
+        expect(instance.state.cursor).to.eql('auto')
       })
 
       it('changes position toward bottom-right corner', () => {
-        const zoom = 3
-        const rect = { width: 1920, height: 1080, left: 0, top: 0, bottom: 1080, right: 1920 }
-        component.setState({ zoom: zoom, posX: 640, posY: 360 })
-        instance.move(rect, -20, -20, containerRect)
-        expect(instance.state).to.eql({
-          zoom: zoom, posX: 620, posY: 340, cursor: 'move', useTransition: false
-        })
+        mockGetBoudingClientRect({ width: 1920, height: 1080, bottom: 1080, right: 1920 })
+        component.setState({ zoom: 3, posX: 640, posY: 360 })
+        instance.move(-20, -20, 0)
+        expect(instance.state.posX).to.eql(620)
+        expect(instance.state.posY).to.eql(340)
+        expect(instance.state.cursor).to.eql('move')
       })
 
       it('changes position toward left-top corner with a limited shift', () => {
-        const zoom = 3
-        const rect = { width: 1920, height: 1080, left: -10, top: -10, bottom: 1070, right: 1910 }
-        component.setState({ zoom: zoom, posX: 630, posY: 350 })
-        instance.move(rect, 20, 20, containerRect)
-        expect(instance.state).to.eql({
-          zoom: zoom, posX: 640, posY: 360, cursor: 'move', useTransition: false
-        })
+        mockGetBoudingClientRect({ width: 1920, height: 1080, left: -10, top: -10, bottom: 1070, right: 1910 })
+        component.setState({ zoom: 3, posX: 630, posY: 350 })
+        instance.move(20, 20)
+        expect(instance.state.posX).to.eql(640)
+        expect(instance.state.posY).to.eql(360)
+        expect(instance.state.cursor).to.eql('move')
       })
 
       it('changes position on X axis only', () => {
-        // Simulates a twice higher container
-        Object.defineProperty(document.body, 'clientHeight', { get: () => containerHeight * 2, configurable: true })
-        containerRect = { ...containerRect, height: containerHeight * 2, bottom: containerHeight * 2 }
-
-        const zoom = 3
-        const rect = { width: 1920, height: 1080, left: -10, top: -10, bottom: 1070, right: 1910 }
-        component.setState({ zoom: zoom, posX: 630, posY: 350 })
-        instance.move(rect, -20, -20, containerRect)
-        expect(instance.state).to.eql({
-          zoom: zoom, posX: 610, posY: 350, cursor: 'ew-resize', useTransition: false
-        })
+        mockGetBoudingClientRect({ width: containerWidth * 2, height: 600, left: 0, top: 0, bottom: 600, right: containerWidth * 2 })
+        component.setState({ zoom: 2, posX: 640, posY: 360 })
+        instance.move(-20, -20)
+        expect(instance.state.posX).to.eql(620)
+        expect(instance.state.posY).to.eql(360)
+        expect(instance.state.cursor).to.eql('ew-resize')
       })
 
       it('changes position on Y axis only', () => {
-        const zoom = 2
-        const rect = { width: 1280, height: 720, left: -10, top: -10, bottom: 710, right: 1270 }
-        component.setState({ zoom: zoom, posX: 640, posY: 350 })
-        instance.move(rect, -20, -20, containerRect)
-        expect(instance.state).to.eql({
-          zoom: zoom, posX: 640, posY: 330, cursor: 'ns-resize', useTransition: false
-        })
+        mockGetBoudingClientRect({ width: 600, height: containerHeight * 2, left: 0, top: 0, bottom: containerHeight * 2, right: 600 })
+        component.setState({ zoom: 2, posX: 640, posY: 350 })
+        instance.move(-20, -20)
+        expect(instance.state.posX).to.eql(640)
+        expect(instance.state.posY).to.eql(330)
+        expect(instance.state.cursor).to.eql('ns-resize')
       })
     })
 
@@ -187,16 +198,21 @@ describe('components', () => {
 
     describe('zoomToZone', () => {
       it('zoom-in on the specified zone', () => {
+        mockGetBoudingClientRect()
+        component.setState({ zoom: 1, posX: 640, posY: 360 })
         instance.zoomToZone(400, 10, 230, 340)
         expect(instance.state).to.eql({
-          zoom: 1.7647058823529411, posX: -908.8235294117646, posY: -317.6470588235294, cursor: 'auto', useTransition: true
+          zoom: 1.7647058823529411,
+          posX: -344.11764705882354,
+          posY: 0,
+          cursor: 'auto',
+          transitionDuration: 0.25
         })
       })
     })
 
     describe('reset', () => {
       it('resets the state', () => {
-        component.setState({ zoom: 2, useTransition: false })
         instance.reset()
         expect(instance.state).to.eql(defaultState)
       })

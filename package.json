@@ -25,8 +25,8 @@
     "build": "webpack --mode production",
     "deploy": "gh-pages -d examples/dist",
     "publish-demo": "npm run build && npm run deploy",
-    "test": "intern config='intern.json'",
-    "watchTest": "nodemon --watch ./src --exec 'npm run test' || true",
+    "test": "intern",
+    "test:watch": "nodemon --exec 'intern'",
     "eslint": "eslint ."
   },
   "peerDependencies": {
