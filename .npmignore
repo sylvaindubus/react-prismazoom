@@ -4,6 +4,6 @@ tests
 .babelrc
 .eslintrc.json
 .gitignore
-.gitlab-ci.yml
+.nodemon.json
 intern.json
 webpack.config.js
