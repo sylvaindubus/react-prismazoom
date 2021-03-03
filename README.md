@@ -84,10 +84,6 @@ import PrismaZoom from 'react-prismazoom'
 | scrollVelocity | number | 0.1 | Zoom increment or decrement on each scroll wheel detection. |
 | onZoomChange | function | null | Function called each time the zoom value changes. |
 | onPanChange | function | null | Function called each time the posX or posY value changes (aka images was panned). |
-| leftBoundary | number | 0 | Left screen-relative boundary, used to limit panning zone. |
-| rightBoundary | number | 0 | Right screen-relative boundary, used to limit panning zone. |
-| topBoundary | number | 0 | Top screen-relative boundary, used to limit panning zone. |
-| bottomBoundary | number | 0 | Bottom screen-relative boundary, used to limit panning zone. |
 | animDuration | number | 0.25 | Animation duration (in seconds). |
 | doubleTouchMaxDelay | number | 300 | Max delay between two taps to consider a double tap (in milliseconds). |
 | decelerationDuration | number | 750 | Decelerating movement duration after a mouse up or a touch end event (in milliseconds). |

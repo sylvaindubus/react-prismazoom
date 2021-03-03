@@ -2,7 +2,8 @@ import React, { Component, createRef } from 'react'
 import { render } from 'react-dom'
 
 import PrismaZoom from '../../src'
-import background from './radeau-de-la-meduse.jpg'
+import backgroundOne from './radeau-de-la-meduse.jpg'
+import backgroundTwo from './eruption-du-vesuve.jpg'
 import './styles.css'
 
 class App extends Component {
@@ -16,10 +17,6 @@ class App extends Component {
 
   onZoomChange = zoom => {
     this.setState({ zoom })
-  }
-
-  onPanChange = pos => {
-    console.log(pos.posX, pos.posY)
   }
 
   onClickOnZoomOut = () => {
@@ -63,13 +60,28 @@ class App extends Component {
           <h2>A pan and zoom component for React, using CSS transformations.</h2>
         </header>
         <section className="App-wrapper">
-          <PrismaZoom className="App-zoom" topBoundary={120} onZoomChange={this.onZoomChange} maxZoom={8} onPanChange={this.onPanChange} ref={this.prismaZoom}>
-            <div className="App-image" style={{ backgroundImage: `url(${background})` }}></div>
+          <PrismaZoom className="App-zoom" onZoomChange={this.onZoomChange} maxZoom={8} ref={this.prismaZoom}>
+            <div className="App-image" style={{ backgroundImage: `url(${backgroundOne})` }}></div>
             <article className="App-card" onDoubleClick={this.onDoubleClickOnCard}>
-              <h3>The Raft of the Medusa</h3>
+              <header className="App-cardHeader">
+                <h3>The Raft of the Medusa</h3>
+                <span>Théodore Géricault</span>
+              </header>
               <p>The Raft of the Medusa (French: Le Radeau de la Méduse) – originally titled Scène de Naufrage (Shipwreck Scene) – is an oil painting of 1818–19 by the French Romantic painter and lithographer Théodore Géricault (1791–1824). Completed when the artist was 27, the work has become an icon of French Romanticism.</p>
               <p><a href="https://en.wikipedia.org/wiki/The_Raft_of_the_Medusa" target="_blank" rel="noreferrer">Go to Wikipedia.</a></p>
               <footer><strong>Tip: </strong>double-click on this card to zoom. 😉</footer>
+            </article>
+          </PrismaZoom>
+        </section>
+        <section className="App-wrapper">
+          <PrismaZoom className="App-zoom" onZoomChange={this.onZoomChange} maxZoom={8}>
+            <div className="App-image" style={{ backgroundImage: `url(${backgroundTwo})` }}></div>
+            <article className="App-card">
+              <header className="App-cardHeader">
+                <h3>Vesuvius in Eruption</h3>
+                <span>Joseph Mallord William Turner</span>
+              </header>
+              <p>The eighteenth-century fascination with volcanoes, and Vesuvius in particular, deepened in the nineteenth century, fuelled by the eruptions of Vesuvius in 1794, 1807, 1819, and 1822.</p>
             </article>
           </PrismaZoom>
         </section>

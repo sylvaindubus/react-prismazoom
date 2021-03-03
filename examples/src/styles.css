@@ -11,7 +11,7 @@ html {
 body {
   min-width: 320px;
   margin: 0;
-  background-color: #eee;
+  background-color: #111;
   font-family: 'Jost', sans-serif;
 }
 
@@ -94,10 +94,11 @@ h1, h2 {
 
 .App-wrapper {
   display: flex;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 180px);
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  margin: 30px;
 }
 
 .App-zoom {
@@ -127,8 +128,12 @@ h1, h2 {
   color: #fff;
 }
 
+.App-cardHeader {
+  margin-bottom: 1em;
+}
+
 .App-card h3 {
-  margin: 0 0 1em 0;
+  margin: 0;
   font-weight: 400;
   font-size: 1.5rem;
 }

@@ -11,10 +11,6 @@ export default class PrismaZoom extends PureComponent {
     scrollVelocity: PropTypes.number,
     onZoomChange: PropTypes.func,
     onPanChange: PropTypes.func,
-    leftBoundary: PropTypes.number,
-    rightBoundary: PropTypes.number,
-    topBoundary: PropTypes.number,
-    bottomBoundary: PropTypes.number,
     animDuration: PropTypes.number,
     doubleTouchMaxDelay: PropTypes.number,
     decelerationDuration: PropTypes.number
@@ -35,14 +31,6 @@ export default class PrismaZoom extends PureComponent {
     onZoomChange: null,
     // Function called each time the posX or posY value changes (aka images was panned)
     onPanChange: null,
-    // Left screen-relative boundary, used to limit panning zone
-    leftBoundary: 0,
-    // Right screen-relative boundary, used to limit panning zone
-    rightBoundary: 0,
-    // Top screen-relative boundary, used to limit panning zone
-    topBoundary: 0,
-    // Bottom screen-relative boundary, used to limit panning zone
-    bottomBoundary: 0,
     // Animation duration (in seconds)
     animDuration: 0.25,
     // Max delay between two taps to consider a double tap (in milliseconds)
@@ -193,22 +181,15 @@ export default class PrismaZoom extends PureComponent {
    * @param  {Number} transitionDuration Transition duration (in seconds)
    */
   move = (shiftX, shiftY, transitionDuration = 0) => {
-    const { leftBoundary, rightBoundary, topBoundary, bottomBoundary } = this.props
     let { posX, posY } = this.state
 
     // Get container and container's parent coordinates
     const rect = this.ref.current.getBoundingClientRect()
     const parentRect = this.ref.current.parentNode.getBoundingClientRect()
 
-    // Get horizontal limits using specified horizontal boundaries
-    const [leftLimit, rightLimit] = [
-      leftBoundary,
-      document.body.clientWidth - rightBoundary
-    ]
-
     const [isLarger, isOutLeftBoundary, isOutRightBoundary] = [
       // Check if the element is larger than its container
-      (rect.width > (rightLimit - leftLimit)),
+      (rect.width > (parentRect.right - parentRect.left)),
       // Check if the element is out its container left boundary
       (shiftX > 0 && (rect.left - parentRect.left) < 0),
       // Check if the element is out its container right boundary
@@ -217,18 +198,12 @@ export default class PrismaZoom extends PureComponent {
 
     const canMoveOnX = isLarger || isOutLeftBoundary || isOutRightBoundary
     if (canMoveOnX) {
-      posX += this.getLimitedShift(shiftX, leftLimit, rightLimit, rect.left, rect.right)
+      posX += this.getLimitedShift(shiftX, parentRect.left, parentRect.right, rect.left, rect.right)
     }
-
-    // Get vertical limits using specified vertical boundaries
-    const [topLimit, bottomLimit] = [
-      topBoundary,
-      document.body.clientHeight - bottomBoundary
-    ]
 
     const [isHigher, isOutTopBoundary, isOutBottomBoundary] = [
       // Check if the element is higher than its container
-      (rect.height > (bottomLimit - topLimit)),
+      (rect.height > (parentRect.bottom - parentRect.top)),
       // Check if the element is out its container top boundary
       (shiftY > 0 && (rect.top - parentRect.top) < 0),
       // Check if the element is out its container bottom boundary
@@ -237,7 +212,7 @@ export default class PrismaZoom extends PureComponent {
 
     const canMoveOnY = isHigher || isOutTopBoundary || isOutBottomBoundary
     if (canMoveOnY) {
-      posY += this.getLimitedShift(shiftY, topLimit, bottomLimit, rect.top, rect.bottom)
+      posY += this.getLimitedShift(shiftY, parentRect.top, parentRect.bottom, rect.top, rect.bottom)
     }
 
     const cursor = this.getCursor(canMoveOnX, canMoveOnY)
@@ -285,6 +260,7 @@ export default class PrismaZoom extends PureComponent {
    */
   handleMouseWheel = event => {
     event.preventDefault()
+
     const { minZoom, maxZoom, scrollVelocity } = this.props
     let { zoom, posX, posY } = this.state
 
@@ -520,14 +496,15 @@ export default class PrismaZoom extends PureComponent {
    * @param  {Number} relHeight Zone height in pixels
    */
   zoomToZone = (relX, relY, relWidth, relHeight) => {
-    const { maxZoom, leftBoundary, rightBoundary, topBoundary, bottomBoundary } = this.props
+    const { maxZoom } = this.props
     let { zoom, posX, posY } = this.state
+    const parentRect = this.ref.current.parentNode.getBoundingClientRect()
 
     const prevZoom = zoom
 
     // Calculate zoom factor to scale the zone
-    const optimalZoomX = (document.body.clientWidth - leftBoundary - rightBoundary) / relWidth
-    const optimalZoomY = (document.body.clientHeight - topBoundary - bottomBoundary) / relHeight
+    const optimalZoomX = parentRect.width / relWidth
+    const optimalZoomY = parentRect.height / relHeight
     zoom = Math.min(optimalZoomX, optimalZoomY, maxZoom)
 
     // Calculate new position to center the zone
@@ -558,7 +535,7 @@ export default class PrismaZoom extends PureComponent {
     return this.state.zoom
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate (_, prevState) {
     if (this.props.onZoomChange && this.state.zoom !== prevState.zoom) {
       this.props.onZoomChange(this.state.zoom)
     }
