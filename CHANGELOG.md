@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.1] - 2021-04-22
+- Use wrapper boundaries instead of specified props
+
 ## [2.0.0] - 2021-02-26
 - Update all dependencies
 - Rework on the example page
