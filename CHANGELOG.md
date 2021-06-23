@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.2] - 2021-06-23
+- Includes React 17 as peer dependencies
+
 ## [2.0.1] - 2021-04-22
 - Use wrapper boundaries instead of specified props
 
