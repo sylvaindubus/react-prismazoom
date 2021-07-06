@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.3] - 2021-07-06
+- Prevent error when component is unmounted but still moving
+- Fix double-tap bug on Safari iOS
+
 ## [2.0.2] - 2021-06-23
 - Includes React 17 as peer dependencies
 
