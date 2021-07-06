@@ -181,6 +181,7 @@ export default class PrismaZoom extends PureComponent {
    * @param  {Number} transitionDuration Transition duration (in seconds)
    */
   move = (shiftX, shiftY, transitionDuration = 0) => {
+    if (!this.ref.current) return
     let { posX, posY } = this.state
 
     // Get container and container's parent coordinates
