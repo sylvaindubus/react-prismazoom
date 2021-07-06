@@ -152,3 +152,5 @@ h1, h2 {
     display: block;
   }
 }
+
+@media (pointer: fine) {}

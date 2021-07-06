@@ -288,6 +288,7 @@ export default class PrismaZoom extends PureComponent {
    */
   handleDoubleClick = event => {
     event.preventDefault()
+    console.log('a')
 
     if (this.state.zoom === this.props.minZoom) {
       this.fullZoomInOnPosition(event.pageX, event.pageY)
@@ -565,19 +566,31 @@ export default class PrismaZoom extends PureComponent {
       willChange: 'transform'
     }
 
-    const attr = {
+    let attr = {
       ref: this.ref,
       style: style,
       className: className,
-      onDoubleClick: this.handleDoubleClick,
-      onMouseDown: this.handleMouseStart,
-      onMouseMove: this.handleMouseMove,
-      onMouseUp: this.handleMouseStop,
-      onMouseLeave: this.handleMouseStop,
-      onTouchStart: this.handleTouchStart,
-      onTouchMove: this.handleTouchMove,
-      onTouchEnd: this.handleTouchStop,
-      onTouchCancel: this.handleTouchStop
+    }
+
+    if (window.matchMedia("(pointer: fine)").matches) {
+      // Apply mouse events only to devices which include an accurate pointing device
+      attr = {
+        ...attr,
+        onDoubleClick: this.handleDoubleClick,
+        onMouseDown: this.handleMouseStart,
+        onMouseMove: this.handleMouseMove,
+        onMouseUp: this.handleMouseStop,
+        onMouseLeave: this.handleMouseStop,
+      }
+    } else {
+      // Apply touch events to all other devices
+      attr = {
+        ...attr,
+        onTouchStart: this.handleTouchStart,
+        onTouchMove: this.handleTouchMove,
+        onTouchEnd: this.handleTouchStop,
+        onTouchCancel: this.handleTouchStop
+      }
     }
 
     return <div {...attr}>{children}</div>
