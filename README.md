@@ -87,6 +87,7 @@ import PrismaZoom from 'react-prismazoom'
 | animDuration | number | 0.25 | Animation duration (in seconds). |
 | doubleTouchMaxDelay | number | 300 | Max delay between two taps to consider a double tap (in milliseconds). |
 | decelerationDuration | number | 750 | Decelerating movement duration after a mouse up or a touch end event (in milliseconds). |
+| disableScroll | boolean | false | Disable zoom on scroll |
 
 **Note:** all props are optional.
 
