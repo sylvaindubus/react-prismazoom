@@ -5,5 +5,8 @@ tests
 .eslintrc.json
 .gitignore
 .nodemon.json
+.nvmrc
+.prettierrc
 intern.json
+nodemon.json
 webpack.config.js
