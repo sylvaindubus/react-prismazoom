@@ -2,8 +2,8 @@ import React, { Component, createRef } from 'react'
 import { render } from 'react-dom'
 
 import PrismaZoom from '../../src'
-import backgroundOne from './radeau-de-la-meduse.jpg'
-import backgroundTwo from './eruption-du-vesuve.jpg'
+import backgroundOne from './images/radeau-de-la-meduse.jpg'
+import backgroundTwo from './images/eruption-du-vesuve.jpg'
 import './styles.css'
 
 class App extends Component {

@@ -44,6 +44,7 @@
     "@babel/preset-react": "^7.16.5",
     "@babel/register": "^7.16.5",
     "babel-loader": "^8.2.3",
+    "copy-webpack-plugin": "^10.2.0",
     "css-loader": "^6.5.1",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
