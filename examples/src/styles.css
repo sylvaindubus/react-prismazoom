@@ -55,8 +55,8 @@ h1, h2 {
 }
 
 .App-footer {
-  position: fixed;
-  bottom: 0;
+  position: absolute;
+  bottom: 0px;
   text-align: center;
   width: 100%
 }
@@ -65,25 +65,25 @@ h1, h2 {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  width: 120px;
-  padding: 15px;
-  background-color: #000;
+  padding: 6px 15px;
+  background-color: #111;
   color: #fff;
   border-radius: 4px 4px 0 0;
 }
 
 .App-button {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   text-align: center;
-  border: 2px solid #fff;
+  border: none;
   border-radius: 50%;
   outline: none;
   background: none;
   color: #fff;
   font-size: 0.75rem;
   cursor: pointer;
+  vertical-align: middle;
 }
 
 .App-buttonIcon {
@@ -99,6 +99,7 @@ h1, h2 {
   justify-content: center;
   overflow: hidden;
   margin: 30px;
+  position: relative;
 }
 
 .App-zoom {
@@ -145,6 +146,12 @@ h1, h2 {
 .App-card a,
 .App-card a:visited {
   color: #61DAFB
+}
+
+.App-zoomLabel {
+  display: inline-block;
+  width: 60px;
+  vertical-align: middle;
 }
 
 @media (min-width: 640px) {

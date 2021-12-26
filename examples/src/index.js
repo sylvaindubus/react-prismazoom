@@ -11,7 +11,8 @@ class App extends Component {
     super(props)
     this.prismaZoom = createRef()
     this.state = {
-      zoom: 1
+      zoom: 1,
+      locked: false,
     }
   }
 
@@ -72,9 +73,24 @@ class App extends Component {
               <footer><strong>Tip: </strong>double-click on this card to zoom. 😉</footer>
             </article>
           </PrismaZoom>
+          <footer className="App-footer">
+            <div className="App-indicator">
+              <button className="App-button" onClick={this.onClickOnZoomOut}>
+                <svg className="App-buttonIcon" viewBox="0 0 24 24">
+                  <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm4-9H8a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2z" />
+                </svg>
+              </button>
+              <span className="App-zoomLabel">{parseInt(this.state.zoom * 100)}%</span>
+              <button className="App-button" onClick={this.onClickOnZoomIn}>
+                <svg className="App-buttonIcon" viewBox="0 0 24 24">
+                  <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm4-9h-3V8a1 1 0 0 0-2 0v3H8a1 1 0 0 0 0 2h3v3a1 1 0 0 0 2 0v-3h3a1 1 0 0 0 0-2z" />
+                </svg>
+              </button>
+            </div>
+          </footer>
         </section>
         <section className="App-wrapper">
-          <PrismaZoom className="App-zoom" onZoomChange={this.onZoomChange} maxZoom={8}>
+          <PrismaZoom className="App-zoom" locked={this.state.locked} maxZoom={8}>
             <div className="App-image" style={{ backgroundImage: `url(${backgroundTwo})` }}></div>
             <article className="App-card">
               <header className="App-cardHeader">
@@ -84,17 +100,20 @@ class App extends Component {
               <p>The eighteenth-century fascination with volcanoes, and Vesuvius in particular, deepened in the nineteenth century, fuelled by the eruptions of Vesuvius in 1794, 1807, 1819, and 1822.</p>
             </article>
           </PrismaZoom>
+          <footer className="App-footer">
+            <div className="App-indicator">
+              <button className="App-button" onClick={this.onClickOnLock}>
+                <svg className="App-buttonIcon" viewBox="0 0 24 24">
+                  {this.state.locked ? (
+                    <path d="M12 13a1.49 1.49 0 0 0-1 2.61V17a1 1 0 0 0 2 0v-1.39A1.49 1.49 0 0 0 12 13zm5-4V7A5 5 0 0 0 7 7v2a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-7a3 3 0 0 0-3-3zM9 7a3 3 0 0 1 6 0v2H9zm9 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1z" />
+                    ) : (
+                    <path d="M12 13a1.49 1.49 0 0 0-1 2.61V17a1 1 0 0 0 2 0v-1.39A1.49 1.49 0 0 0 12 13zm5-4H9V7a3 3 0 0 1 5.12-2.13 3.08 3.08 0 0 1 .78 1.38 1 1 0 1 0 1.94-.5 5.09 5.09 0 0 0-1.31-2.29A5 5 0 0 0 7 7v2a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-7a3 3 0 0 0-3-3zm1 10a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1z" />
+                  )}
+                </svg>
+              </button>
+            </div>
+          </footer>
         </section>
-        <footer className="App-footer">
-          <div className="App-indicator">
-            <button className="App-button" onClick={this.onClickOnZoomOut}>
-              <svg className="App-buttonIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 13H5v-2h14v2z"/></svg></button>
-            <span>{parseInt(this.state.zoom * 100)}%</span>
-            <button className="App-button" onClick={this.onClickOnZoomIn}>
-              <svg className="App-buttonIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            </button>
-          </div>
-        </footer>
       </div>
     )
   }

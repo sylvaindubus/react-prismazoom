@@ -13,7 +13,8 @@ export default class PrismaZoom extends PureComponent {
     onPanChange: PropTypes.func,
     animDuration: PropTypes.number,
     doubleTouchMaxDelay: PropTypes.number,
-    decelerationDuration: PropTypes.number
+    decelerationDuration: PropTypes.number,
+    locked: PropTypes.bool
   }
 
   static defaultProps = {
@@ -36,7 +37,9 @@ export default class PrismaZoom extends PureComponent {
     // Max delay between two taps to consider a double tap (in milliseconds)
     doubleTouchMaxDelay: 300,
     // Decelerating movement duration after a mouse up or a touch end event (in milliseconds)
-    decelerationDuration: 750
+    decelerationDuration: 750,
+    // Disable all user's interactions
+    locked: false
   }
 
   static defaultState = {
@@ -261,6 +264,9 @@ export default class PrismaZoom extends PureComponent {
    */
   handleMouseWheel = event => {
     event.preventDefault()
+    if (this.props.locked) {
+      return;
+    }
 
     const { minZoom, maxZoom, scrollVelocity } = this.props
     let { zoom, posX, posY } = this.state
@@ -536,6 +542,33 @@ export default class PrismaZoom extends PureComponent {
     return this.state.zoom
   }
 
+  /**
+   * Determines which events should be binded to the element.
+   * @return {Object} Object of event listeners
+   */
+  getEvents () {
+    if (this.props.locked) return {}
+
+    if (window.matchMedia("(pointer: fine)").matches) {
+      // Apply mouse events only to devices which include an accurate pointing device
+      return {
+        onDoubleClick: this.handleDoubleClick,
+        onMouseDown: this.handleMouseStart,
+        onMouseMove: this.handleMouseMove,
+        onMouseUp: this.handleMouseStop,
+        onMouseLeave: this.handleMouseStop,
+      }
+    }
+
+    // Apply touch events to all other devices
+    return {
+      onTouchStart: this.handleTouchStart,
+      onTouchMove: this.handleTouchMove,
+      onTouchEnd: this.handleTouchStop,
+      onTouchCancel: this.handleTouchStop
+    }
+  }
+
   componentDidUpdate (_, prevState) {
     if (this.props.onZoomChange && this.state.zoom !== prevState.zoom) {
       this.props.onZoomChange(this.state.zoom)
@@ -554,11 +587,11 @@ export default class PrismaZoom extends PureComponent {
   }
 
   render () {
-    const { className, children } = this.props
+    const { className, style: propsStyle, children } = this.props
     const { zoom, posX, posY, cursor, transitionDuration } = this.state
 
     const style = {
-      ...this.props.style,
+      ...propsStyle,
       transform: `translate3d(${posX}px, ${posY}px, 0) scale(${zoom})`,
       transition: `transform ease-out ${transitionDuration}s`,
       cursor: cursor,
@@ -566,31 +599,13 @@ export default class PrismaZoom extends PureComponent {
       willChange: 'transform'
     }
 
-    let attr = {
-      ref: this.ref,
-      style: style,
-      className: className,
-    }
+    const events = this.getEvents()
 
-    if (window.matchMedia("(pointer: fine)").matches) {
-      // Apply mouse events only to devices which include an accurate pointing device
-      attr = {
-        ...attr,
-        onDoubleClick: this.handleDoubleClick,
-        onMouseDown: this.handleMouseStart,
-        onMouseMove: this.handleMouseMove,
-        onMouseUp: this.handleMouseStop,
-        onMouseLeave: this.handleMouseStop,
-      }
-    } else {
-      // Apply touch events to all other devices
-      attr = {
-        ...attr,
-        onTouchStart: this.handleTouchStart,
-        onTouchMove: this.handleTouchMove,
-        onTouchEnd: this.handleTouchStop,
-        onTouchCancel: this.handleTouchStop
-      }
+    const attr = {
+      ref: this.ref,
+      className,
+      style,
+      ...events
     }
 
     return <div {...attr}>{children}</div>
