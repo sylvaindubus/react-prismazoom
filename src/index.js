@@ -69,6 +69,8 @@ export default class PrismaZoom extends PureComponent {
     this.lastTouchDistance = null
     // Last request animation frame identifier
     this.lastRequestAnimationId = null
+    // Determines if the device has a mouse
+    this.hasMouseDevice = window.matchMedia('(pointer: fine)').matches
 
     this.state = {
       ...this.constructor.defaultState,
@@ -96,10 +98,7 @@ export default class PrismaZoom extends PureComponent {
 
       // Retrieve rectangle dimensions and mouse position
       const [centerX, centerY] = [rect.width / 2, rect.height / 2]
-      const [relativeX, relativeY] = [
-        x - rect.left - window.pageXOffset,
-        y - rect.top - window.pageYOffset,
-      ]
+      const [relativeX, relativeY] = [x - rect.left - window.pageXOffset, y - rect.top - window.pageYOffset]
 
       // If we are zooming down, we must try to center to mouse position
       const [absX, absY] = [(centerX - relativeX) / prevZoom, (centerY - relativeY) / prevZoom]
@@ -241,10 +240,7 @@ export default class PrismaZoom extends PureComponent {
       const [shiftX, shiftY] = [lastShiftOnX * ratio, lastShiftOnY * ratio]
 
       // Continue animation only if time has not expired and if there is still some movement (more than 1 pixel on one axis)
-      if (
-        progress < this.props.decelerationDuration &&
-        Math.max(Math.abs(shiftX), Math.abs(shiftY)) > 1
-      ) {
+      if (progress < this.props.decelerationDuration && Math.max(Math.abs(shiftX), Math.abs(shiftY)) > 1) {
         this.move(shiftX, shiftY, 0)
         this.lastRequestAnimationId = requestAnimationFrame(move)
       } else {
@@ -292,6 +288,9 @@ export default class PrismaZoom extends PureComponent {
    */
   handleDoubleClick = (event) => {
     event.preventDefault()
+    if (this.props.locked) {
+      return
+    }
 
     if (this.state.zoom === this.props.minZoom) {
       this.fullZoomInOnPosition(event.pageX, event.pageY)
@@ -306,6 +305,9 @@ export default class PrismaZoom extends PureComponent {
    */
   handleMouseStart = (event) => {
     event.preventDefault()
+    if (this.props.locked) {
+      return
+    }
 
     if (this.lastRequestAnimationId) {
       cancelAnimationFrame(this.lastRequestAnimationId)
@@ -320,8 +322,7 @@ export default class PrismaZoom extends PureComponent {
    */
   handleMouseMove = (event) => {
     event.preventDefault()
-
-    if (!this.lastCursor) {
+    if (this.props.locked || !this.lastCursor) {
       return
     }
 
@@ -358,6 +359,9 @@ export default class PrismaZoom extends PureComponent {
    */
   handleTouchStart = (event) => {
     event.preventDefault()
+    if (this.props.locked) {
+      return
+    }
 
     if (this.lastRequestAnimationId) {
       cancelAnimationFrame(this.lastRequestAnimationId)
@@ -393,13 +397,12 @@ export default class PrismaZoom extends PureComponent {
    */
   handleTouchMove = (event) => {
     event.preventDefault()
+    if (this.props.locked || !this.lastTouch) {
+      return
+    }
 
     const { maxZoom, minZoom } = this.props
     let { zoom } = this.state
-
-    if (!this.lastTouch) {
-      return
-    }
 
     if (event.touches.length === 1) {
       const [posX, posY] = [event.touches[0].pageX, event.touches[0].pageY]
@@ -542,73 +545,65 @@ export default class PrismaZoom extends PureComponent {
     return this.state.zoom
   }
 
-  /**
-   * Determines which events should be binded to the element.
-   * @return {Object} Object of event listeners
-   */
-  getEvents() {
-    if (this.props.locked) return {}
-
-    if (window.matchMedia('(pointer: fine)').matches) {
-      // Apply mouse events only to devices which include an accurate pointing device
-      return {
-        onDoubleClick: this.handleDoubleClick,
-        onMouseDown: this.handleMouseStart,
-        onMouseMove: this.handleMouseMove,
-        onMouseUp: this.handleMouseStop,
-        onMouseLeave: this.handleMouseStop,
-      }
-    }
-
-    // Apply touch events to all other devices
-    return {
-      onTouchStart: this.handleTouchStart,
-      onTouchMove: this.handleTouchMove,
-      onTouchEnd: this.handleTouchStop,
-      onTouchCancel: this.handleTouchStop,
-    }
-  }
-
   componentDidUpdate(_, prevState) {
     if (this.props.onZoomChange && this.state.zoom !== prevState.zoom) {
       this.props.onZoomChange(this.state.zoom)
     }
-    if (
-      this.props.onPanChange &&
-      (this.state.posX !== prevState.posX || this.state.posY !== prevState.posY)
-    ) {
+    if (this.props.onPanChange && (this.state.posX !== prevState.posX || this.state.posY !== prevState.posY)) {
       this.props.onPanChange({ posX: this.state.posX, posY: this.state.posY })
     }
   }
 
   componentDidMount() {
     this.ref.current.addEventListener('wheel', this.handleMouseWheel.bind(this), { passive: false })
+
+    if (this.hasMouseDevice) {
+      // Apply mouse events only to devices which include an accurate pointing device
+      this.ref.current.addEventListener('mousedown', this.handleMouseStart.bind(this), { passive: false })
+      this.ref.current.addEventListener('mousemove', this.handleMouseMove.bind(this), { passive: false })
+      this.ref.current.addEventListener('mouseup', this.handleMouseStop.bind(this), { passive: false })
+      this.ref.current.addEventListener('mouseleave', this.handleMouseStop.bind(this), { passive: false })
+    } else {
+      // Apply touch events to all other devices
+      this.ref.current.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false })
+      this.ref.current.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false })
+      this.ref.current.addEventListener('touchend', this.handleTouchStop.bind(this), { passive: false })
+      this.ref.current.addEventListener('touchcancel', this.handleTouchStop.bind(this), { passive: false })
+    }
   }
 
   componentWillUnmount() {
     this.ref.current.removeEventListener('wheel', this.handleMouseWheel.bind(this))
+
+    if (this.hasMouseDevice) {
+      this.ref.current.removeEventListener('mousedown', this.handleMouseStart.bind(this))
+      this.ref.current.removeEventListener('mousemove', this.handleMouseMove.bind(this))
+      this.ref.current.removeEventListener('mouseup', this.handleMouseStop.bind(this))
+      this.ref.current.removeEventListener('mouseleave', this.handleMouseStop.bind(this))
+    } else {
+      this.ref.current.removeEventListener('touchstart', this.handleTouchStart.bind(this))
+      this.ref.current.removeEventListener('touchmove', this.handleTouchMove.bind(this))
+      this.ref.current.removeEventListener('touchend', this.handleTouchStop.bind(this))
+      this.ref.current.removeEventListener('touchcancel', this.handleTouchStop.bind(this))
+    }
   }
 
   render() {
-    const { className, style: propsStyle, children } = this.props
+    const { className, style, children } = this.props
     const { zoom, posX, posY, cursor, transitionDuration } = this.state
-
-    const style = {
-      ...propsStyle,
-      transform: `translate3d(${posX}px, ${posY}px, 0) scale(${zoom})`,
-      transition: `transform ease-out ${transitionDuration}s`,
-      cursor: cursor,
-      touchAction: 'none',
-      willChange: 'transform',
-    }
-
-    const events = this.getEvents()
 
     const attr = {
       ref: this.ref,
+      onDoubleClick: this.handleDoubleClick.bind(this),
       className,
-      style,
-      ...events,
+      style: {
+        ...style,
+        transform: `translate3d(${posX}px, ${posY}px, 0) scale(${zoom})`,
+        transition: `transform ease-out ${transitionDuration}s`,
+        cursor: cursor,
+        touchAction: 'none',
+        willChange: 'transform',
+      },
     }
 
     return <div {...attr}>{children}</div>
