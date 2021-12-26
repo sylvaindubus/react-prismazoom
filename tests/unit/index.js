@@ -3,7 +3,7 @@
 import React from 'react'
 import { mount, configure } from 'enzyme'
 import { JSDOM } from 'jsdom'
-import Adapter from 'enzyme-adapter-react-16'
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17'
 
 import PrismaZoom from '../../src/index.js'
 
@@ -15,10 +15,13 @@ const { expect } = intern.getPlugin('chai')
 const documentHTML = '<!doctype html><html><head></head><body><div></div></body></html>'
 const jsdom = new JSDOM(documentHTML, { pretendToBeVisual: true })
 global.window = jsdom.window
+global.window.matchMedia = () => ({
+  matches: true,
+})
 global.document = jsdom.window.document
 global.navigator = { userAgent: 'node.js' }
 
-const [containerWidth, containerHeight] = [1440, 600]
+const [containerWidth, containerHeight] = [1440, 800]
 
 const mockGetBoudingClientRect = (falseData) => {
   window.HTMLElement.prototype.getBoundingClientRect = function () {
@@ -151,11 +154,11 @@ describe('components', () => {
       })
 
       it('changes position toward bottom-right corner', () => {
-        mockGetBoudingClientRect({ width: 1920, height: 1080, bottom: 1080, right: 1920 })
-        component.setState({ zoom: 3, posX: 640, posY: 360 })
+        mockGetBoudingClientRect({ width: 1920, height: 1920, bottom: 1920, right: 1920 })
+        component.setState({ zoom: 2, posX: 640, posY: 640 })
         instance.move(-20, -20, 0)
         expect(instance.state.posX).to.eql(620)
-        expect(instance.state.posY).to.eql(340)
+        expect(instance.state.posY).to.eql(620)
         expect(instance.state.cursor).to.eql('move')
       })
 
@@ -233,8 +236,8 @@ describe('components', () => {
         component.setState({ zoom: 1, posX: 640, posY: 360 })
         instance.zoomToZone(400, 10, 230, 340)
         expect(instance.state).to.eql({
-          zoom: 1.7647058823529411,
-          posX: -344.11764705882354,
+          zoom: 2.3529411764705883,
+          posX: -458.8235294117647,
           posY: 0,
           cursor: 'auto',
           transitionDuration: 0.25,
