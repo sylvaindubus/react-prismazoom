@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.0] - 2021-12-26
+- Add a prop to lock the component
+
 ## [2.0.3] - 2021-07-06
 - Prevent error when component is unmounted but still moving
 - Fix double-tap bug on Safari iOS
