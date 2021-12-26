@@ -6,7 +6,5 @@
   "instrumenterOptions": {
     "esModules": true
   },
-  "coverage": [
-    "./src/*.js"
-  ]
+  "coverage": ["./src/*.js"]
 }

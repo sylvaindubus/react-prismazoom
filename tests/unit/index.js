@@ -20,7 +20,7 @@ global.navigator = { userAgent: 'node.js' }
 
 const [containerWidth, containerHeight] = [1440, 600]
 
-const mockGetBoudingClientRect = falseData => {
+const mockGetBoudingClientRect = (falseData) => {
   window.HTMLElement.prototype.getBoundingClientRect = function () {
     if (this.className === 'prismaZoom') {
       // Return data for the PrismaZoom element
@@ -31,7 +31,7 @@ const mockGetBoudingClientRect = falseData => {
         left: 0,
         right: 640,
         bottom: 360,
-        ...falseData
+        ...falseData,
       }
       return data
     } else {
@@ -42,7 +42,7 @@ const mockGetBoudingClientRect = falseData => {
         top: 0,
         left: 0,
         bottom: containerWidth,
-        right: containerHeight
+        right: containerHeight,
       }
     }
   }
@@ -52,9 +52,13 @@ describe('components', () => {
   describe('PrismaZoom', () => {
     const props = {
       minZoom: 1,
-      maxZoom: 5
+      maxZoom: 5,
     }
-    const component = mount(<PrismaZoom className="prismaZoom" {...props}><div></div></PrismaZoom>)
+    const component = mount(
+      <PrismaZoom className="prismaZoom" {...props}>
+        <div></div>
+      </PrismaZoom>
+    )
     const instance = component.instance()
     const defaultState = instance.state
 
@@ -63,8 +67,14 @@ describe('components', () => {
       component.setState(defaultState)
 
       // Override clientWidth and clientHeight getters
-      Object.defineProperty(document.body, 'clientWidth', { get: () => containerWidth, configurable: true })
-      Object.defineProperty(document.body, 'clientHeight', { get: () => containerHeight, configurable: true })
+      Object.defineProperty(document.body, 'clientWidth', {
+        get: () => containerWidth,
+        configurable: true,
+      })
+      Object.defineProperty(document.body, 'clientHeight', {
+        get: () => containerHeight,
+        configurable: true,
+      })
     })
 
     it('renders correctly', () => {
@@ -126,7 +136,7 @@ describe('components', () => {
           posX: 1260,
           posY: 700,
           cursor: 'auto',
-          transitionDuration: 0.25
+          transitionDuration: 0.25,
         })
       })
     })
@@ -150,7 +160,14 @@ describe('components', () => {
       })
 
       it('changes position toward left-top corner with a limited shift', () => {
-        mockGetBoudingClientRect({ width: 1920, height: 1080, left: -10, top: -10, bottom: 1070, right: 1910 })
+        mockGetBoudingClientRect({
+          width: 1920,
+          height: 1080,
+          left: -10,
+          top: -10,
+          bottom: 1070,
+          right: 1910,
+        })
         component.setState({ zoom: 3, posX: 630, posY: 350 })
         instance.move(20, 20)
         expect(instance.state.posX).to.eql(640)
@@ -159,7 +176,14 @@ describe('components', () => {
       })
 
       it('changes position on X axis only', () => {
-        mockGetBoudingClientRect({ width: containerWidth * 2, height: 600, left: 0, top: 0, bottom: 600, right: containerWidth * 2 })
+        mockGetBoudingClientRect({
+          width: containerWidth * 2,
+          height: 600,
+          left: 0,
+          top: 0,
+          bottom: 600,
+          right: containerWidth * 2,
+        })
         component.setState({ zoom: 2, posX: 640, posY: 360 })
         instance.move(-20, -20)
         expect(instance.state.posX).to.eql(620)
@@ -168,7 +192,14 @@ describe('components', () => {
       })
 
       it('changes position on Y axis only', () => {
-        mockGetBoudingClientRect({ width: 600, height: containerHeight * 2, left: 0, top: 0, bottom: containerHeight * 2, right: 600 })
+        mockGetBoudingClientRect({
+          width: 600,
+          height: containerHeight * 2,
+          left: 0,
+          top: 0,
+          bottom: containerHeight * 2,
+          right: 600,
+        })
         component.setState({ zoom: 2, posX: 640, posY: 350 })
         instance.move(-20, -20)
         expect(instance.state.posX).to.eql(640)
@@ -206,7 +237,7 @@ describe('components', () => {
           posX: -344.11764705882354,
           posY: 0,
           cursor: 'auto',
-          transitionDuration: 0.25
+          transitionDuration: 0.25,
         })
       })
     })

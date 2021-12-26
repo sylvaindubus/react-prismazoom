@@ -14,7 +14,7 @@ export default class PrismaZoom extends PureComponent {
     animDuration: PropTypes.number,
     doubleTouchMaxDelay: PropTypes.number,
     decelerationDuration: PropTypes.number,
-    locked: PropTypes.bool
+    locked: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -39,7 +39,7 @@ export default class PrismaZoom extends PureComponent {
     // Decelerating movement duration after a mouse up or a touch end event (in milliseconds)
     decelerationDuration: 750,
     // Disable all user's interactions
-    locked: false
+    locked: false,
   }
 
   static defaultState = {
@@ -50,10 +50,10 @@ export default class PrismaZoom extends PureComponent {
     // Transform translateY value property
     posY: 0,
     // Cursor style property
-    cursor: 'auto'
+    cursor: 'auto',
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     // Reference to the main element
     this.ref = createRef()
@@ -72,7 +72,7 @@ export default class PrismaZoom extends PureComponent {
 
     this.state = {
       ...this.constructor.defaultState,
-      transitionDuration: props.animDuration
+      transitionDuration: props.animDuration,
     }
   }
 
@@ -96,21 +96,18 @@ export default class PrismaZoom extends PureComponent {
 
       // Retrieve rectangle dimensions and mouse position
       const [centerX, centerY] = [rect.width / 2, rect.height / 2]
-      const [relativeX, relativeY] = [x - rect.left - window.pageXOffset, y - rect.top - window.pageYOffset]
+      const [relativeX, relativeY] = [
+        x - rect.left - window.pageXOffset,
+        y - rect.top - window.pageYOffset,
+      ]
 
       // If we are zooming down, we must try to center to mouse position
       const [absX, absY] = [(centerX - relativeX) / prevZoom, (centerY - relativeY) / prevZoom]
       const ratio = zoom - prevZoom
-      return [
-        prevPosX + (absX * ratio),
-        prevPosY + (absY * ratio)
-      ]
+      return [prevPosX + absX * ratio, prevPosY + absY * ratio]
     } else {
       // If we are zooming down, we shall re-center the element
-      return [
-        (prevPosX * (zoom - 1)) / (prevZoom - 1),
-        (prevPosY * (zoom - 1)) / (prevZoom - 1)
-      ]
+      return [(prevPosX * (zoom - 1)) / (prevZoom - 1), (prevPosY * (zoom - 1)) / (prevZoom - 1)]
     }
   }
 
@@ -172,7 +169,7 @@ export default class PrismaZoom extends PureComponent {
     const { maxZoom } = this.props
 
     const zoom = maxZoom
-    const [ posX, posY ] = this.getNewPosition(x, y, zoom)
+    const [posX, posY] = this.getNewPosition(x, y, zoom)
 
     this.setState({ zoom, posX, posY, transitionDuration: this.props.animDuration })
   }
@@ -193,11 +190,11 @@ export default class PrismaZoom extends PureComponent {
 
     const [isLarger, isOutLeftBoundary, isOutRightBoundary] = [
       // Check if the element is larger than its container
-      (rect.width > (parentRect.right - parentRect.left)),
+      rect.width > parentRect.right - parentRect.left,
       // Check if the element is out its container left boundary
-      (shiftX > 0 && (rect.left - parentRect.left) < 0),
+      shiftX > 0 && rect.left - parentRect.left < 0,
       // Check if the element is out its container right boundary
-      (shiftX < 0 && (rect.right - parentRect.right) > 0)
+      shiftX < 0 && rect.right - parentRect.right > 0,
     ]
 
     const canMoveOnX = isLarger || isOutLeftBoundary || isOutRightBoundary
@@ -207,11 +204,11 @@ export default class PrismaZoom extends PureComponent {
 
     const [isHigher, isOutTopBoundary, isOutBottomBoundary] = [
       // Check if the element is higher than its container
-      (rect.height > (parentRect.bottom - parentRect.top)),
+      rect.height > parentRect.bottom - parentRect.top,
       // Check if the element is out its container top boundary
-      (shiftY > 0 && (rect.top - parentRect.top) < 0),
+      shiftY > 0 && rect.top - parentRect.top < 0,
       // Check if the element is out its container bottom boundary
-      (shiftY < 0 && (rect.bottom - parentRect.bottom) > 0)
+      shiftY < 0 && rect.bottom - parentRect.bottom > 0,
     ]
 
     const canMoveOnY = isHigher || isOutTopBoundary || isOutBottomBoundary
@@ -232,7 +229,7 @@ export default class PrismaZoom extends PureComponent {
   startDeceleration = (lastShiftOnX, lastShiftOnY) => {
     let startTimestamp = null
 
-    const move = timestamp => {
+    const move = (timestamp) => {
       if (startTimestamp === null) {
         startTimestamp = timestamp
       }
@@ -241,13 +238,13 @@ export default class PrismaZoom extends PureComponent {
       // Calculates the ratio to apply on the move (used to create a non-linear deceleration)
       const ratio = (this.props.decelerationDuration - progress) / this.props.decelerationDuration
 
-      const [shiftX, shiftY] = [
-        lastShiftOnX * ratio,
-        lastShiftOnY * ratio
-      ]
+      const [shiftX, shiftY] = [lastShiftOnX * ratio, lastShiftOnY * ratio]
 
       // Continue animation only if time has not expired and if there is still some movement (more than 1 pixel on one axis)
-      if (progress < this.props.decelerationDuration && Math.max(Math.abs(shiftX), Math.abs(shiftY)) > 1) {
+      if (
+        progress < this.props.decelerationDuration &&
+        Math.max(Math.abs(shiftX), Math.abs(shiftY)) > 1
+      ) {
         this.move(shiftX, shiftY, 0)
         this.lastRequestAnimationId = requestAnimationFrame(move)
       } else {
@@ -262,27 +259,27 @@ export default class PrismaZoom extends PureComponent {
    * Event handler on scroll.
    * @param  {MouseEvent} event Mouse event
    */
-  handleMouseWheel = event => {
+  handleMouseWheel = (event) => {
     event.preventDefault()
     if (this.props.locked) {
-      return;
+      return
     }
 
     const { minZoom, maxZoom, scrollVelocity } = this.props
     let { zoom, posX, posY } = this.state
 
     // Use the scroll event delta to determine the zoom velocity
-    const velocity = - event.deltaY * scrollVelocity / 100
+    const velocity = (-event.deltaY * scrollVelocity) / 100
 
     // Set the new zoom level
     zoom = Math.max(Math.min(zoom + velocity, maxZoom), minZoom)
 
     if (zoom !== this.state.zoom) {
       if (zoom !== minZoom) {
-        [ posX, posY ] = this.getNewPosition(event.pageX, event.pageY, zoom)
+        ;[posX, posY] = this.getNewPosition(event.pageX, event.pageY, zoom)
       } else {
         // Reset to original position
-        [ posX, posY ] = [this.constructor.defaultState.posX, this.constructor.defaultState.posY]
+        ;[posX, posY] = [this.constructor.defaultState.posX, this.constructor.defaultState.posY]
       }
     }
 
@@ -293,7 +290,7 @@ export default class PrismaZoom extends PureComponent {
    * Event handler on double click.
    * @param  {MouseEvent} event Mouse event
    */
-  handleDoubleClick = event => {
+  handleDoubleClick = (event) => {
     event.preventDefault()
 
     if (this.state.zoom === this.props.minZoom) {
@@ -307,7 +304,7 @@ export default class PrismaZoom extends PureComponent {
    * Event handler on mouse down.
    * @param  {MouseEvent} event Mouse event
    */
-  handleMouseStart = event => {
+  handleMouseStart = (event) => {
     event.preventDefault()
 
     if (this.lastRequestAnimationId) {
@@ -321,7 +318,7 @@ export default class PrismaZoom extends PureComponent {
    * Event handler on mouse move.
    * @param  {MouseEvent} event Mouse event
    */
-  handleMouseMove = event => {
+  handleMouseMove = (event) => {
     event.preventDefault()
 
     if (!this.lastCursor) {
@@ -341,7 +338,7 @@ export default class PrismaZoom extends PureComponent {
    * Event handler on mouse up or mouse out.
    * @param  {MouseEvent} event Mouse event
    */
-  handleMouseStop = event => {
+  handleMouseStop = (event) => {
     event.preventDefault()
 
     if (this.lastShift) {
@@ -359,7 +356,7 @@ export default class PrismaZoom extends PureComponent {
    * Zoom-in at the maximum scale if a double tap is detected.
    * @param  {TouchEvent} event Touch event
    */
-  handleTouchStart = event => {
+  handleTouchStart = (event) => {
     event.preventDefault()
 
     if (this.lastRequestAnimationId) {
@@ -371,7 +368,10 @@ export default class PrismaZoom extends PureComponent {
     if (event.touches.length === 1) {
       // Check if it is a double tap
       const touchTime = new Date().getTime()
-      if (touchTime - this.lastTouchTime < this.props.doubleTouchMaxDelay && touchTime - this.lastDoubleTapTime > this.props.doubleTouchMaxDelay) {
+      if (
+        touchTime - this.lastTouchTime < this.props.doubleTouchMaxDelay &&
+        touchTime - this.lastDoubleTapTime > this.props.doubleTouchMaxDelay
+      ) {
         if (this.state.zoom === this.props.minZoom) {
           this.fullZoomInOnPosition(posX, posY)
         } else {
@@ -391,7 +391,7 @@ export default class PrismaZoom extends PureComponent {
    * Either move the element using one finger or zoom-in with a two finger pinch.
    * @param  {TouchEvent} event Touch move
    */
-  handleTouchMove = event => {
+  handleTouchMove = (event) => {
     event.preventDefault()
 
     const { maxZoom, minZoom } = this.props
@@ -459,17 +459,17 @@ export default class PrismaZoom extends PureComponent {
    * Increments the zoom with the given value.
    * @param  {Number} value Zoom value
    */
-  zoomIn = value => {
+  zoomIn = (value) => {
     const { maxZoom } = this.props
     let { zoom, posX, posY } = this.state
 
     const prevZoom = zoom
 
-    zoom = (zoom + value < maxZoom ? zoom + value : maxZoom)
+    zoom = zoom + value < maxZoom ? zoom + value : maxZoom
 
     if (zoom !== prevZoom) {
-      posX = (posX * (zoom - 1)) / (prevZoom > 1 ? (prevZoom - 1) : prevZoom)
-      posY = (posY * (zoom - 1)) / (prevZoom > 1 ? (prevZoom - 1) : prevZoom)
+      posX = (posX * (zoom - 1)) / (prevZoom > 1 ? prevZoom - 1 : prevZoom)
+      posY = (posY * (zoom - 1)) / (prevZoom > 1 ? prevZoom - 1 : prevZoom)
     }
 
     this.setState({ zoom, posX, posY, transitionDuration: this.props.animDuration })
@@ -479,13 +479,13 @@ export default class PrismaZoom extends PureComponent {
    * Decrements the zoom with the given value.
    * @param  {Number} value Zoom value
    */
-  zoomOut = value => {
+  zoomOut = (value) => {
     const { minZoom } = this.props
     let { zoom, posX, posY } = this.state
 
     const prevZoom = zoom
 
-    zoom = (zoom - value > minZoom ? zoom - value : minZoom)
+    zoom = zoom - value > minZoom ? zoom - value : minZoom
 
     if (zoom !== prevZoom) {
       posX = (posX * (zoom - 1)) / (prevZoom - 1)
@@ -516,8 +516,8 @@ export default class PrismaZoom extends PureComponent {
 
     // Calculate new position to center the zone
     const rect = this.ref.current.getBoundingClientRect()
-    const [centerX, centerY] = [(rect.width / prevZoom) / 2, (rect.height / prevZoom) / 2]
-    const [zoneCenterX, zoneCenterY] = [relX + (relWidth / 2), relY + (relHeight / 2)]
+    const [centerX, centerY] = [rect.width / prevZoom / 2, rect.height / prevZoom / 2]
+    const [zoneCenterX, zoneCenterY] = [relX + relWidth / 2, relY + relHeight / 2]
     posX = (centerX - zoneCenterX) * zoom
     posY = (centerY - zoneCenterY) * zoom
 
@@ -530,7 +530,7 @@ export default class PrismaZoom extends PureComponent {
   reset = () => {
     this.setState({
       ...this.constructor.defaultState,
-      transitionDuration: this.props.animDuration
+      transitionDuration: this.props.animDuration,
     })
   }
 
@@ -546,10 +546,10 @@ export default class PrismaZoom extends PureComponent {
    * Determines which events should be binded to the element.
    * @return {Object} Object of event listeners
    */
-  getEvents () {
+  getEvents() {
     if (this.props.locked) return {}
 
-    if (window.matchMedia("(pointer: fine)").matches) {
+    if (window.matchMedia('(pointer: fine)').matches) {
       // Apply mouse events only to devices which include an accurate pointing device
       return {
         onDoubleClick: this.handleDoubleClick,
@@ -565,28 +565,31 @@ export default class PrismaZoom extends PureComponent {
       onTouchStart: this.handleTouchStart,
       onTouchMove: this.handleTouchMove,
       onTouchEnd: this.handleTouchStop,
-      onTouchCancel: this.handleTouchStop
+      onTouchCancel: this.handleTouchStop,
     }
   }
 
-  componentDidUpdate (_, prevState) {
+  componentDidUpdate(_, prevState) {
     if (this.props.onZoomChange && this.state.zoom !== prevState.zoom) {
       this.props.onZoomChange(this.state.zoom)
     }
-    if (this.props.onPanChange && (this.state.posX !== prevState.posX || this.state.posY !== prevState.posY)) {
+    if (
+      this.props.onPanChange &&
+      (this.state.posX !== prevState.posX || this.state.posY !== prevState.posY)
+    ) {
       this.props.onPanChange({ posX: this.state.posX, posY: this.state.posY })
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.ref.current.addEventListener('wheel', this.handleMouseWheel.bind(this), { passive: false })
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.ref.current.removeEventListener('wheel', this.handleMouseWheel.bind(this))
   }
 
-  render () {
+  render() {
     const { className, style: propsStyle, children } = this.props
     const { zoom, posX, posY, cursor, transitionDuration } = this.state
 
@@ -596,7 +599,7 @@ export default class PrismaZoom extends PureComponent {
       transition: `transform ease-out ${transitionDuration}s`,
       cursor: cursor,
       touchAction: 'none',
-      willChange: 'transform'
+      willChange: 'transform',
     }
 
     const events = this.getEvents()
@@ -605,7 +608,7 @@ export default class PrismaZoom extends PureComponent {
       ref: this.ref,
       className,
       style,
-      ...events
+      ...events,
     }
 
     return <div {...attr}>{children}</div>

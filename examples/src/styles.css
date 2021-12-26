@@ -15,7 +15,8 @@ body {
   font-family: 'Jost', sans-serif;
 }
 
-h1, h2 {
+h1,
+h2 {
   margin: 0;
   font-weight: normal;
 }
@@ -42,14 +43,14 @@ h1, h2 {
   line-height: 3rem;
   background-image: linear-gradient(120deg, #155799 50%, #991557);
   background-clip: text;
-	background-size: 200% 100%;
-	background-position: 100%;
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
+  background-position: 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .App-header h2 {
-  margin-top: .5em;
+  margin-top: 0.5em;
   font-size: 1rem;
   color: #ddd;
 }
@@ -58,7 +59,7 @@ h1, h2 {
   position: absolute;
   bottom: 0px;
   text-align: center;
-  width: 100%
+  width: 100%;
 }
 
 .App-indicator {
@@ -145,7 +146,7 @@ h1, h2 {
 
 .App-card a,
 .App-card a:visited {
-  color: #61DAFB
+  color: #61dafb;
 }
 
 .App-zoomLabel {
@@ -159,5 +160,3 @@ h1, h2 {
     display: block;
   }
 }
-
-@media (pointer: fine) {}
