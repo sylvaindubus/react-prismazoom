@@ -28,6 +28,13 @@ class App extends Component {
     this.prismaZoom.current.zoomIn(1)
   }
 
+  onClickOnLock = () => {
+    const { locked } = this.state
+    this.setState({
+      locked: !locked,
+    })
+  }
+
   onDoubleClickOnCard = (event) => {
     event.preventDefault()
     event.stopPropagation()
@@ -42,10 +49,7 @@ class App extends Component {
       return
     }
 
-    const [relX, relY] = [
-      (zoneRect.left - layoutRect.left) / zoom,
-      (zoneRect.top - layoutRect.top) / zoom,
-    ]
+    const [relX, relY] = [(zoneRect.left - layoutRect.left) / zoom, (zoneRect.top - layoutRect.top) / zoom]
     const [relWidth, relHeight] = [zoneRect.width / zoom, zoneRect.height / zoom]
     this.prismaZoom.current.zoomToZone(relX, relY, relWidth, relHeight)
   }
@@ -58,12 +62,7 @@ class App extends Component {
           <h2>A pan and zoom component for React, using CSS transformations.</h2>
         </header>
         <section className="App-wrapper">
-          <PrismaZoom
-            className="App-zoom"
-            onZoomChange={this.onZoomChange}
-            maxZoom={8}
-            ref={this.prismaZoom}
-          >
+          <PrismaZoom className="App-zoom" onZoomChange={this.onZoomChange} maxZoom={8} ref={this.prismaZoom}>
             <div className="App-image" style={{ backgroundImage: `url(${backgroundOne})` }}></div>
             <article className="App-card" onDoubleClick={this.onDoubleClickOnCard}>
               <header className="App-cardHeader">
@@ -71,17 +70,13 @@ class App extends Component {
                 <span>Théodore Géricault</span>
               </header>
               <p>
-                The Raft of the Medusa (French: Le Radeau de la Méduse) – originally titled Scène de
-                Naufrage (Shipwreck Scene) – is an oil painting of 1818–19 by the French Romantic
-                painter and lithographer Théodore Géricault (1791–1824). Completed when the artist
-                was 27, the work has become an icon of French Romanticism.
+                The Raft of the Medusa (French: Le Radeau de la Méduse) – originally titled Scène de Naufrage (Shipwreck
+                Scene) – is an oil painting of 1818–19 by the French Romantic painter and lithographer Théodore
+                Géricault (1791–1824). Completed when the artist was 27, the work has become an icon of French
+                Romanticism.
               </p>
               <p>
-                <a
-                  href="https://en.wikipedia.org/wiki/The_Raft_of_the_Medusa"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href="https://en.wikipedia.org/wiki/The_Raft_of_the_Medusa" target="_blank" rel="noreferrer">
                   Go to Wikipedia.
                 </a>
               </p>
@@ -115,9 +110,8 @@ class App extends Component {
                 <span>Joseph Mallord William Turner</span>
               </header>
               <p>
-                The eighteenth-century fascination with volcanoes, and Vesuvius in particular,
-                deepened in the nineteenth century, fuelled by the eruptions of Vesuvius in 1794,
-                1807, 1819, and 1822.
+                The eighteenth-century fascination with volcanoes, and Vesuvius in particular, deepened in the
+                nineteenth century, fuelled by the eruptions of Vesuvius in 1794, 1807, 1819, and 1822.
               </p>
             </article>
           </PrismaZoom>
