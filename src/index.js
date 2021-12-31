@@ -14,6 +14,7 @@ export default class PrismaZoom extends PureComponent {
     animDuration: PropTypes.number,
     doubleTouchMaxDelay: PropTypes.number,
     decelerationDuration: PropTypes.number,
+    pannable: PropTypes.bool,
     locked: PropTypes.bool,
   }
 
@@ -38,6 +39,8 @@ export default class PrismaZoom extends PureComponent {
     doubleTouchMaxDelay: 300,
     // Decelerating movement duration after a mouse up or a touch end event (in milliseconds)
     decelerationDuration: 750,
+    // Enable or disable panning in place
+    pannable: true,
     // Disable all user's interactions
     locked: false,
   }
@@ -547,7 +550,7 @@ export default class PrismaZoom extends PureComponent {
    * @return {Object} Object of event listeners
    */
   getEvents() {
-    if (this.props.locked) return {}
+    if (this.props.locked || !this.props.pannable) return {}
 
     if (window.matchMedia('(pointer: fine)').matches) {
       // Apply mouse events only to devices which include an accurate pointing device

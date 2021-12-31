@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.1] - 2021-12-31
+- Add a prop to enable/disable panning
+
 ## [2.1.0] - 2021-12-26
 - Add a prop to lock the component
 
