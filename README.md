@@ -87,19 +87,20 @@ import PrismaZoom from 'react-prismazoom'
 
 ### Props
 
-| Name | Type | Default | Description |
-| --- | --- | --- |  --- |
-| className | string | None | Class name to apply on the zoom wrapper. |
-| style | object | None | Style to apply on the zoom wrapper. Note that *transform*, *transition*, *cursor*, *touch-action* and *will-change* cannot be overridden. Example: `style={{backgroundColor: 'red'}}`. |
-| minZoom | number | 1 | Minimum zoom ratio. |
-| maxZoom | number | 5 | Maximum zoom ratio. |
-| scrollVelocity | number | 0.1 | Zoom increment or decrement on each scroll wheel detection. |
-| onZoomChange | function | null | Function called each time the zoom value changes. |
-| onPanChange | function | null | Function called each time the posX or posY value changes (aka images was panned). |
-| animDuration | number | 0.25 | Animation duration (in seconds). |
-| doubleTouchMaxDelay | number | 300 | Max delay between two taps to consider a double tap (in milliseconds). |
-| decelerationDuration | number | 750 | Decelerating movement duration after a mouse up or a touch end event (in milliseconds). |
-| locked | boolean | false | Disable all user's interactions. |
+| Name                 | Type | Default | Description                                                                                                                                                                            |
+|----------------------| --- | --- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| className            | string | None | Class name to apply on the zoom wrapper.                                                                                                                                               |
+| style                | object | None | Style to apply on the zoom wrapper. Note that *transform*, *transition*, *cursor*, *touch-action* and *will-change* cannot be overridden. Example: `style={{backgroundColor: 'red'}}`. |
+| minZoom              | number | 1 | Minimum zoom ratio.                                                                                                                                                                    |
+| maxZoom              | number | 5 | Maximum zoom ratio.                                                                                                                                                                    |
+| scrollVelocity       | number | 0.1 | Zoom increment or decrement on each scroll wheel detection.                                                                                                                            |
+| onZoomChange         | function | null | Function called each time the zoom value changes.                                                                                                                                      |
+| onPanChange          | function | null | Function called each time the posX or posY value changes (aka images was panned).                                                                                                      |
+| animDuration         | number | 0.25 | Animation duration (in seconds).                                                                                                                                                       |
+| doubleTouchMaxDelay  | number | 300 | Max delay between two taps to consider a double tap (in milliseconds).                                                                                                                 |
+| decelerationDuration | number | 750 | Decelerating movement duration after a mouse up or a touch end event (in milliseconds).                                                                                                |
+| locked               | boolean | false | Disable all user's interactions.                                                                                                                                                       |
+| interactive          | boolean | false | Enables touch event propagation.                                                                                                                                                       |
 
 **Note:** all props are optional.
 
