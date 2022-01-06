@@ -15,6 +15,7 @@ export default class PrismaZoom extends PureComponent {
     doubleTouchMaxDelay: PropTypes.number,
     decelerationDuration: PropTypes.number,
     locked: PropTypes.bool,
+    allowTouchEvents: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -40,6 +41,8 @@ export default class PrismaZoom extends PureComponent {
     decelerationDuration: 750,
     // Disable all user's interactions
     locked: false,
+    // By default, all touch events are caught (if set to true touch events propagate)
+    allowTouchEvents: false,
   }
 
   static defaultState = {
@@ -357,7 +360,9 @@ export default class PrismaZoom extends PureComponent {
    * @param  {TouchEvent} event Touch event
    */
   handleTouchStart = (event) => {
-    event.preventDefault()
+    if (!this.props.allowTouchEvents) {
+      event.preventDefault()
+    }
 
     if (this.lastRequestAnimationId) {
       cancelAnimationFrame(this.lastRequestAnimationId)
@@ -392,7 +397,9 @@ export default class PrismaZoom extends PureComponent {
    * @param  {TouchEvent} event Touch move
    */
   handleTouchMove = (event) => {
-    event.preventDefault()
+    if (!this.props.allowTouchEvents) {
+      event.preventDefault()
+    }
 
     const { maxZoom, minZoom } = this.props
     let { zoom } = this.state
