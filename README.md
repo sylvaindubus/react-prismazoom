@@ -100,6 +100,7 @@ import PrismaZoom from 'react-prismazoom'
 | doubleTouchMaxDelay | number | 300 | Max delay between two taps to consider a double tap (in milliseconds). |
 | decelerationDuration | number | 750 | Decelerating movement duration after a mouse up or a touch end event (in milliseconds). |
 | locked | boolean | false | Disable all user's interactions. |
+| allowTouchEvents | boolean | false | Enables touch event propagation. |
 
 **Note:** all props are optional.
 
