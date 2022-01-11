@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.2.0] - 2022-01-11
+- Add a prop `allowTouchEvents` to allow event propagation (thanks fkrauthan)
+
 ## [2.1.0] - 2021-12-26
 - Add a prop to lock the component
 
