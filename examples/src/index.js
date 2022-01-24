@@ -12,7 +12,8 @@ class App extends Component {
     this.prismaZoom = createRef()
     this.state = {
       zoom: 1,
-      locked: false,
+      allowZoom: true,
+      allowPan: true,
     }
   }
 
@@ -29,9 +30,10 @@ class App extends Component {
   }
 
   onClickOnLock = () => {
-    const { locked } = this.state
+    const { allowZoom, allowPan } = this.state
     this.setState({
-      locked: !locked,
+      allowZoom: !allowZoom,
+      allowPan: !allowPan,
     })
   }
 
@@ -102,7 +104,7 @@ class App extends Component {
           </footer>
         </section>
         <section className="App-wrapper">
-          <PrismaZoom className="App-zoom" locked={this.state.locked} maxZoom={8}>
+          <PrismaZoom className="App-zoom" allowZoom={this.state.allowZoom} allowPan={this.state.allowPan} maxZoom={8}>
             <div className="App-image" style={{ backgroundImage: `url(${backgroundTwo})` }}></div>
             <article className="App-card">
               <header className="App-cardHeader">
@@ -119,7 +121,7 @@ class App extends Component {
             <div className="App-indicator">
               <button className="App-button" onClick={this.onClickOnLock}>
                 <svg className="App-buttonIcon" viewBox="0 0 24 24">
-                  {this.state.locked ? (
+                  {!this.state.allowPan && !this.state.allowZoom ? (
                     <path d="M12 13a1.49 1.49 0 0 0-1 2.61V17a1 1 0 0 0 2 0v-1.39A1.49 1.49 0 0 0 12 13zm5-4V7A5 5 0 0 0 7 7v2a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-7a3 3 0 0 0-3-3zM9 7a3 3 0 0 1 6 0v2H9zm9 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1z" />
                   ) : (
                     <path d="M12 13a1.49 1.49 0 0 0-1 2.61V17a1 1 0 0 0 2 0v-1.39A1.49 1.49 0 0 0 12 13zm5-4H9V7a3 3 0 0 1 5.12-2.13 3.08 3.08 0 0 1 .78 1.38 1 1 0 1 0 1.94-.5 5.09 5.09 0 0 0-1.31-2.29A5 5 0 0 0 7 7v2a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-7a3 3 0 0 0-3-3zm1 10a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1z" />

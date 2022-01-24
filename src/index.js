@@ -14,7 +14,8 @@ export default class PrismaZoom extends PureComponent {
     animDuration: PropTypes.number,
     doubleTouchMaxDelay: PropTypes.number,
     decelerationDuration: PropTypes.number,
-    locked: PropTypes.bool,
+    allowZoom: PropTypes.bool,
+    allowPan: PropTypes.bool,
     allowTouchEvents: PropTypes.bool,
   }
 
@@ -39,8 +40,10 @@ export default class PrismaZoom extends PureComponent {
     doubleTouchMaxDelay: 300,
     // Decelerating movement duration after a mouse up or a touch end event (in milliseconds)
     decelerationDuration: 750,
-    // Disable all user's interactions
-    locked: false,
+    // Enable or disable zooming in place
+    allowZoom: true,
+    // Enable or disable panning in place
+    allowPan: true,
     // By default, all touch events are caught (if set to true touch events propagate)
     allowTouchEvents: false,
   }
@@ -260,7 +263,7 @@ export default class PrismaZoom extends PureComponent {
    */
   handleMouseWheel = (event) => {
     event.preventDefault()
-    if (this.props.locked) {
+    if (!this.props.allowZoom) {
       return
     }
 
@@ -291,7 +294,7 @@ export default class PrismaZoom extends PureComponent {
    */
   handleDoubleClick = (event) => {
     event.preventDefault()
-    if (this.props.locked) {
+    if (!this.props.allowZoom) {
       return
     }
 
@@ -308,7 +311,7 @@ export default class PrismaZoom extends PureComponent {
    */
   handleMouseStart = (event) => {
     event.preventDefault()
-    if (this.props.locked) {
+    if (!this.props.allowPan) {
       return
     }
 
@@ -325,7 +328,7 @@ export default class PrismaZoom extends PureComponent {
    */
   handleMouseMove = (event) => {
     event.preventDefault()
-    if (this.props.locked || !this.lastCursor) {
+    if (!this.props.allowPan || !this.lastCursor) {
       return
     }
 
@@ -365,7 +368,7 @@ export default class PrismaZoom extends PureComponent {
       event.preventDefault()
     }
 
-    if (this.props.locked) return
+    if (!this.props.allowPan) return
 
     if (this.lastRequestAnimationId) {
       cancelAnimationFrame(this.lastRequestAnimationId)
@@ -404,7 +407,7 @@ export default class PrismaZoom extends PureComponent {
       event.preventDefault()
     }
 
-    if (this.props.locked || !this.lastTouch) return
+    if (!this.props.allowPan || !this.lastTouch) return
 
     const { maxZoom, minZoom } = this.props
     let { zoom } = this.state
