@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.0.0] - 2022-01-24
+- Replace locked prop with allowZoom and allowPan to handle zooming and panning events separately (thanks joshuacerdenia)
+
 ## [2.2.0] - 2022-01-11
 - Add a prop `allowTouchEvents` to allow event propagation (thanks fkrauthan)
 

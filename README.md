@@ -30,6 +30,10 @@ Among changes I would like to apply:
 - Transform to a functional component (that could help splitting the code)
 - Make motion logic less dependant to React
 
+## Breaking changes on v3
+
+* The `locked` prop has been replaced by `allowZoom` and `allowPan` to handle zooming and panning events separately
+
 ## Breaking changes on v2
 
 * The package now requires React v16.3 or higher (in order to use react references)
