@@ -17,6 +17,7 @@ export default class PrismaZoom extends PureComponent {
     allowZoom: PropTypes.bool,
     allowPan: PropTypes.bool,
     allowTouchEvents: PropTypes.bool,
+    allowParentPanning: PropTypes.bool
   }
 
   static defaultProps = {
@@ -46,6 +47,8 @@ export default class PrismaZoom extends PureComponent {
     allowPan: true,
     // By default, all touch events are caught (if set to true touch events propagate)
     allowTouchEvents: false,
+    // By default, page cannot scroll with touch events
+    allowParentPanning: false
   }
 
   static defaultState = {
@@ -597,7 +600,7 @@ export default class PrismaZoom extends PureComponent {
   }
 
   render() {
-    const { className, style, children } = this.props
+    const { className, style, children, allowParentPanning } = this.props
     const { zoom, posX, posY, cursor, transitionDuration } = this.state
 
     const attr = {
@@ -609,7 +612,7 @@ export default class PrismaZoom extends PureComponent {
         transform: `translate3d(${posX}px, ${posY}px, 0) scale(${zoom})`,
         transition: `transform ease-out ${transitionDuration}s`,
         cursor: cursor,
-        touchAction: 'none',
+        touchAction: (allowParentPanning && zoom === 1) ? 'pan-x pan-y' : 'none',
         willChange: 'transform',
       },
     }
