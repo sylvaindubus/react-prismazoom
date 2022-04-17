@@ -2,7 +2,7 @@ html {
   font-size: 80%;
 }
 
-@media (min-width: 481px) {
+@media (min-width: 480px) {
   html {
     font-size: 100%;
   }
@@ -99,7 +99,7 @@ h2 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  margin: 30px;
+  margin: 15px;
   position: relative;
 }
 
@@ -155,7 +155,10 @@ h2 {
   vertical-align: middle;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
+  .App-wrapper {
+    margin: 30px;
+  }
   .App-card {
     display: block;
   }

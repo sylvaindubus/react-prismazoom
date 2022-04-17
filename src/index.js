@@ -364,11 +364,13 @@ export default class PrismaZoom extends PureComponent {
    * @param  {TouchEvent} event Touch event
    */
   handleTouchStart = (event) => {
-    if (!this.props.allowTouchEvents) {
+    const { allowTouchEvents, allowZoom, allowPan, minZoom } = this.props
+    const isDoubleTapping = this.isDoubleTapping()
+    const isMultiTouch = event.touches.length > 1
+
+    if (!allowTouchEvents) {
       event.preventDefault()
     }
-
-    if (!this.props.allowPan) return
 
     if (this.lastRequestAnimationId) {
       cancelAnimationFrame(this.lastRequestAnimationId)
@@ -376,25 +378,24 @@ export default class PrismaZoom extends PureComponent {
 
     const [posX, posY] = [event.touches[0].pageX, event.touches[0].pageY]
 
-    if (event.touches.length === 1) {
-      // Check if it is a double tap
-      const touchTime = new Date().getTime()
-      if (
-        touchTime - this.lastTouchTime < this.props.doubleTouchMaxDelay &&
-        touchTime - this.lastDoubleTapTime > this.props.doubleTouchMaxDelay
-      ) {
-        if (this.state.zoom === this.props.minZoom) {
-          this.fullZoomInOnPosition(posX, posY)
-        } else {
-          this.reset()
-        }
-        this.lastDoubleTapTime = touchTime
-      }
-
-      this.lastTouchTime = touchTime
+    if (isMultiTouch) {
+      this.lastTouch = { posX, posY }
+      return
     }
 
-    this.lastTouch = { posX, posY }
+    if (isDoubleTapping && allowZoom) {
+      if (this.state.zoom === minZoom) {
+        this.fullZoomInOnPosition(posX, posY)
+      } else {
+        this.reset()
+      }
+      return
+    }
+
+    // Don't save the last touch if we are starting a simple touch move while panning is disabled
+    if (allowPan) {
+      this.lastTouch = { posX, posY }
+    }
   }
 
   /**
@@ -407,7 +408,7 @@ export default class PrismaZoom extends PureComponent {
       event.preventDefault()
     }
 
-    if (!this.props.allowPan || !this.lastTouch) return
+    if (!this.lastTouch) return
 
     const { maxZoom, minZoom } = this.props
     let { zoom } = this.state
@@ -431,11 +432,13 @@ export default class PrismaZoom extends PureComponent {
       const distance = Math.sqrt(Math.pow(pos2X - pos1X, 2) + Math.pow(pos2Y - pos1Y, 2))
 
       if (this.lastTouchDistance && distance && distance !== this.lastTouchDistance) {
-        zoom += (distance - this.lastTouchDistance) / 100
-        if (zoom > maxZoom) {
-          zoom = maxZoom
-        } else if (zoom < minZoom) {
-          zoom = minZoom
+        if (this.props.allowZoom) {
+          zoom += (distance - this.lastTouchDistance) / 100
+          if (zoom > maxZoom) {
+            zoom = maxZoom
+          } else if (zoom < minZoom) {
+            zoom = minZoom
+          }
         }
 
         // Change position using the center point between the two fingers
@@ -551,6 +554,25 @@ export default class PrismaZoom extends PureComponent {
    */
   getZoom = () => {
     return this.state.zoom
+  }
+
+  /**
+   * Check if the user is doing a double tap gesture.
+   * @return {Boolean} Result of the checking
+   */
+  isDoubleTapping = () => {
+    const touchTime = new Date().getTime()
+    const isDoubleTap =
+      touchTime - this.lastTouchTime < this.props.doubleTouchMaxDelay &&
+      touchTime - this.lastDoubleTapTime > this.props.doubleTouchMaxDelay
+
+    if (isDoubleTap) {
+      this.lastDoubleTapTime = touchTime
+      return true
+    }
+
+    this.lastTouchTime = touchTime
+    return false
   }
 
   componentDidUpdate(_, prevState) {
