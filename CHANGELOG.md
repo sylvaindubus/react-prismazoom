@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.0.1] - 2022-04-17
+- Fix zooming on mobile when pan is disabled
+
 ## [3.0.0] - 2022-01-24
 - Replace locked prop with allowZoom and allowPan to handle zooming and panning events separately (thanks joshuacerdenia)
 
