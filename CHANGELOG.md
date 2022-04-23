@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.2] - 2022-04-23
+- Update dependencies
+- Include React 18 as peer dependencies
+
 ## [3.0.1] - 2022-04-17
 - Fix zooming on mobile when pan is disabled
 
