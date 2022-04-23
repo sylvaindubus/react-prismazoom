@@ -29,6 +29,7 @@ Among changes I would like to apply:
 - Migrate to TypeScript
 - Transform to a functional component (that could help splitting the code)
 - Make motion logic less dependant to React
+- Replace Enzyme with another testing library
 
 ## Breaking changes on v3
 

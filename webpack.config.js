@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+const EslintPlugin = require('eslint-webpack-plugin')
 
 module.exports = {
   entry: path.join(__dirname, 'examples/src/index.js'),
@@ -13,7 +14,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ['babel-loader', 'eslint-loader'],
+        use: 'babel-loader',
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -40,6 +41,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [{ from: 'examples/src/static', to: 'static' }],
     }),
+    new EslintPlugin(),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
