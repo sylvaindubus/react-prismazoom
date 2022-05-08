@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.0.3] - 2022-05-08
+- Fix panning on React 18
+- Improve splitting between lib and demo app
+- Temporary disable unit tests
+
 ## [3.0.2] - 2022-04-23
 - Update dependencies
 - Include React 18 as peer dependencies
