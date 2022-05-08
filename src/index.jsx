@@ -585,36 +585,36 @@ export default class PrismaZoom extends PureComponent {
   }
 
   componentDidMount() {
-    this.ref.current.addEventListener('wheel', this.handleMouseWheel.bind(this), { passive: false })
+    this.ref.current.addEventListener('wheel', this.handleMouseWheel, { passive: false })
 
     if (this.hasMouseDevice) {
       // Apply mouse events only to devices which include an accurate pointing device
-      this.ref.current.addEventListener('mousedown', this.handleMouseStart.bind(this), { passive: false })
-      this.ref.current.addEventListener('mousemove', this.handleMouseMove.bind(this), { passive: false })
-      this.ref.current.addEventListener('mouseup', this.handleMouseStop.bind(this), { passive: false })
-      this.ref.current.addEventListener('mouseleave', this.handleMouseStop.bind(this), { passive: false })
+      this.ref.current.addEventListener('mousedown', this.handleMouseStart, { passive: false })
+      this.ref.current.addEventListener('mousemove', this.handleMouseMove, { passive: false })
+      this.ref.current.addEventListener('mouseup', this.handleMouseStop, { passive: false })
+      this.ref.current.addEventListener('mouseleave', this.handleMouseStop, { passive: false })
     } else {
       // Apply touch events to all other devices
-      this.ref.current.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false })
-      this.ref.current.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false })
-      this.ref.current.addEventListener('touchend', this.handleTouchStop.bind(this), { passive: false })
-      this.ref.current.addEventListener('touchcancel', this.handleTouchStop.bind(this), { passive: false })
+      this.ref.current.addEventListener('touchstart', this.handleTouchStart, { passive: false })
+      this.ref.current.addEventListener('touchmove', this.handleTouchMove, { passive: false })
+      this.ref.current.addEventListener('touchend', this.handleTouchStop, { passive: false })
+      this.ref.current.addEventListener('touchcancel', this.handleTouchStop, { passive: false })
     }
   }
 
   componentWillUnmount() {
-    this.ref.current.removeEventListener('wheel', this.handleMouseWheel.bind(this))
+    this.ref.current.removeEventListener('wheel', this.handleMouseWheel)
 
     if (this.hasMouseDevice) {
-      this.ref.current.removeEventListener('mousedown', this.handleMouseStart.bind(this))
-      this.ref.current.removeEventListener('mousemove', this.handleMouseMove.bind(this))
-      this.ref.current.removeEventListener('mouseup', this.handleMouseStop.bind(this))
-      this.ref.current.removeEventListener('mouseleave', this.handleMouseStop.bind(this))
+      this.ref.current.removeEventListener('mousedown', this.handleMouseStart)
+      this.ref.current.removeEventListener('mousemove', this.handleMouseMove)
+      this.ref.current.removeEventListener('mouseup', this.handleMouseStop)
+      this.ref.current.removeEventListener('mouseleave', this.handleMouseStop)
     } else {
-      this.ref.current.removeEventListener('touchstart', this.handleTouchStart.bind(this))
-      this.ref.current.removeEventListener('touchmove', this.handleTouchMove.bind(this))
-      this.ref.current.removeEventListener('touchend', this.handleTouchStop.bind(this))
-      this.ref.current.removeEventListener('touchcancel', this.handleTouchStop.bind(this))
+      this.ref.current.removeEventListener('touchstart', this.handleTouchStart)
+      this.ref.current.removeEventListener('touchmove', this.handleTouchMove)
+      this.ref.current.removeEventListener('touchend', this.handleTouchStop)
+      this.ref.current.removeEventListener('touchcancel', this.handleTouchStop)
     }
   }
 
