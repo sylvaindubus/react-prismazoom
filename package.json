@@ -19,6 +19,7 @@
   ],
   "main": "dist/index.js",
   "scripts": {
+    "postinstall": "npm run build",
     "build": "babel src/index.jsx -d dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./src/**"

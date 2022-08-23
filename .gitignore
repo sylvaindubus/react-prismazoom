@@ -1,3 +1,78 @@
-node_modules
-dist
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+/cypress/videos
+/cypress/screenshots
+/cypress/downloads
+
+# production
+/build
+/storybook-static
+
+# compiled output
+/tmp
+/out-tsc
+/devisubox-front-office
+
+# OSX
+*.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+
+# misc
 .DS_Store
+Thumbs.db
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+*.log
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+tsconfig.tsbuildinfo
+
+# IDEs and editors
+.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# NEXT JS
+.next/*
+*nextImageExportOptimizer*
+*next-image-export-optimizer-hashes.json
+/public/images/download/
