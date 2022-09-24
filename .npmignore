@@ -1,12 +1,9 @@
 src
-examples
+demo
 tests
 .babelrc
 .eslintrc.json
 .gitignore
-.nodemon.json
 .nvmrc
+.prettierignore
 .prettierrc
-intern.json
-nodemon.json
-webpack.config.js

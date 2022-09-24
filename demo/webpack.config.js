@@ -1,11 +1,12 @@
 const path = require('path')
 const HtmlPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+const EslintPlugin = require('eslint-webpack-plugin')
 
 module.exports = {
-  entry: path.join(__dirname, 'examples/src/index.js'),
+  entry: path.join(__dirname, 'src'),
   output: {
-    path: path.join(__dirname, 'examples/dist'),
+    path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
   },
   module: {
@@ -13,7 +14,8 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ['babel-loader', 'eslint-loader'],
+        loader: 'babel-loader',
+        options: { presets: ['@babel/env', '@babel/preset-react'] },
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -34,12 +36,13 @@ module.exports = {
   },
   plugins: [
     new HtmlPlugin({
-      template: path.join(__dirname, 'examples/src/index.html'),
+      template: path.join(__dirname, 'index.html'),
       filename: './index.html',
     }),
     new CopyPlugin({
-      patterns: [{ from: 'examples/src/static', to: 'static' }],
+      patterns: [{ from: 'src/static', to: 'static' }],
     }),
+    new EslintPlugin(),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],

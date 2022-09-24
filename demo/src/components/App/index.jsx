@@ -1,10 +1,9 @@
 import React, { Component, createRef } from 'react'
-import { render } from 'react-dom'
 
-import PrismaZoom from '../../src'
+import PrismaZoom from '../../../../src'
 import backgroundOne from './images/radeau-de-la-meduse.jpg'
 import backgroundTwo from './images/eruption-du-vesuve.jpg'
-import './styles.css'
+import './App.css'
 
 class App extends Component {
   constructor(props) {
@@ -136,4 +135,4 @@ class App extends Component {
   }
 }
 
-render(<App />, document.getElementById('root'))
+export default App

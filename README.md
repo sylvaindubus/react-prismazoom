@@ -29,6 +29,7 @@ Among changes I would like to apply:
 - Migrate to TypeScript
 - Transform to a functional component (that could help splitting the code)
 - Make motion logic less dependant to React
+- Replace Enzyme with another testing library
 
 ## Breaking changes on v3
 
@@ -43,38 +44,37 @@ Among changes I would like to apply:
 ## Installation
 
 ### Install the component
+
 ```bash
 $ npm i -D react-prismazoom
 ```
-### Install the example project
 
-This project includes a full-featured application example.
+### Install the demo
+
+This project includes a full-featured application demo.
 
 First clone the project.
 
-Then, install it:
+Go to the subfolder:
 ```bash
-$ npm i
+$ cd demo
 ```
-Run the Webpack Dev Server:
-```bash
-$ npm run start
-```
-Go to http://localhost:1664.
 
-**Note:** sources of this example can be found in `example/src`.
+Then, install it:
+
+```bash
+$ npm ci
+```
+
+Run the Webpack Dev Server:
+
+```bash
+$ npm start
+```
 
 ### Run unit tests
 
-You can either run all tests at once:
-```bash
-$ npm test
-```
-
-Or run tests each time a change on source files occured:
-```bash
-$ npm run test:watch
-```
+⚠️ There is no unit tests anymore, since the previously used library is deprecated and doesn't support React 18. The current test suite need to be adapted using a different library.
 
 ## Usage
 

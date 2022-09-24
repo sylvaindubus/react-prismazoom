@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.0.4] - 2022-09-24
+- Bump dev dependencies to prevent vulnerabilities
+
+## [3.0.3] - 2022-05-08
+- Fix panning on React 18
+- Improve splitting between lib and demo app
+- Temporary disable unit tests
+
+## [3.0.2] - 2022-04-23
+- Update dependencies
+- Include React 18 as peer dependencies
+
+## [3.0.1] - 2022-04-17
+- Fix zooming on mobile when pan is disabled
+
 ## [3.0.0] - 2022-01-24
 - Replace locked prop with allowZoom and allowPan to handle zooming and panning events separately (thanks joshuacerdenia)
 
