@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.0.4] - 2022-09-24
+- Bump dev dependencies to prevent vulnerabilities
+
 ## [3.0.3] - 2022-05-08
 - Fix panning on React 18
 - Improve splitting between lib and demo app
