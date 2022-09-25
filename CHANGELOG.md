@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.1.0] - 2022-09-25
+- Added prop to allow parent movement (thanks SaadTaimoor-TFD)
+- Bump again dev dependencies
+
 ## [3.0.4] - 2022-09-24
 - Bump dev dependencies to prevent vulnerabilities
 
