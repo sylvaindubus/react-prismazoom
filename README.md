@@ -106,6 +106,7 @@ import PrismaZoom from 'react-prismazoom'
 | allowZoom | boolean | true | Enable or disable zooming in place.
 | allowPan | boolean | true | Enable or disable panning in place.
 | allowTouchEvents | boolean | false | Enables touch event propagation. |
+| allowParentPanning | boolean | false | When enabled, allows the parent element/page to pan with single-finger touch events as long as zoom = 1. |
 
 **Note:** all props are optional.
 
