@@ -17,35 +17,37 @@
     "pinch-zoom",
     "css3"
   ],
-  "main": "dist/index.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
   "scripts": {
-    "build": "babel src/index.jsx -d dist",
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
+    "build-watch": "yarn build:esm -w && yarn build:cjs -w",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ./src/**"
+    "lint": "eslint ./src/** --fix"
   },
   "peerDependencies": {
-    "prop-types": "^15.6",
-    "react": "^16.3 || ^17 || ^18",
-    "react-dom": "^16.3 || ^17 || ^18"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.6",
-    "@babel/core": "^7.17.9",
-    "@babel/eslint-parser": "^7.17.0",
-    "@babel/plugin-proposal-class-properties": "^7.16.7",
-    "@babel/plugin-transform-runtime": "^7.17.0",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-react": "^7.16.7",
-    "@babel/register": "^7.17.7",
+    "@types/react": "^18.0.26",
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-webpack-plugin": "^3.1.1",
+    "parcel": "^2.8.1",
+    "parcel-bundler": "^1.12.5",
     "prettier": "^2.6.2",
-    "prop-types": "^15.8.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "typescript": "^4.9.4"
   },
   "optionalDependencies": {
     "fsevents": "*"
