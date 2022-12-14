@@ -1,18 +1,18 @@
-import React from 'react'
+import React, { ComponentRef, MouseEvent } from 'react'
 
-import PrismaZoom, { PrismaZoomRef } from 'react-prismazoom'
+import PrismaZoom from 'react-prismazoom'
 import backgroundOne from './images/radeau-de-la-meduse.jpg'
 import backgroundTwo from './images/eruption-du-vesuve.jpg'
 import './App.css'
 
 function App() {
-  const prismaZoom = React.useRef<PrismaZoomRef>(null)
+  const prismaZoom = React.useRef<ComponentRef<typeof PrismaZoom>>(null)
 
   const [zoom, setZoom] = React.useState(1)
   const [allowZoom, setAllowZoom] = React.useState(true)
   const [allowPan, setAllowPan] = React.useState(true)
 
-  const onZoomChange = (zoom) => {
+  const onZoomChange = (zoom: number) => {
     setZoom(zoom)
   }
 
@@ -29,14 +29,14 @@ function App() {
     setAllowZoom((allowZoom) => !allowZoom)
   }
 
-  const onDoubleClickOnCard = (event) => {
+  const onDoubleClickOnCard = (event: MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
 
-    if (!prismaZoom.current) return
+    if (!prismaZoom.current || !event.currentTarget?.parentNode) return
 
     const zoneRect = event.currentTarget.getBoundingClientRect()
-    const layoutRect = event.currentTarget.parentNode.getBoundingClientRect()
+    const layoutRect = (event.currentTarget.parentNode as Element).getBoundingClientRect()
 
     const zoom = prismaZoom.current.getZoom()
 

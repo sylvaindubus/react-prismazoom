@@ -7,11 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prestart": "npm link .."
   },
-  "dependencies": {
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0"
-  },
   "devDependencies": {
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "gh-pages": "^3.2.3",
     "parcel": "1.12.3",
     "parcel-bundler": "^1.12.5"

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import type { CursorType, PositionType, PositionTypeSimplified, PrismaZoomProps, PrismaZoomRef } from './types'
 
 const DEFAULT_STATE = {
@@ -12,7 +12,7 @@ const DEFAULT_STATE = {
 
 const HAS_MOUSE_DEVICE = window.matchMedia('(pointer: fine)').matches
 
-const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedRef) => {
+const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedRef) => {
   const {
     children,
     onPanChange,
@@ -31,35 +31,35 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     ...divProps
   } = props
 
-  const ref = React.useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
 
-  const lastRequestAnimationIdRef = React.useRef<number | null>()
-  const lastTouchTimeRef = React.useRef<number>()
-  const lastDoubleTapTimeRef = React.useRef<number>()
-  const lastShiftRef = React.useRef<PositionTypeSimplified | null>()
-  const lastTouchDistanceRef = React.useRef<number | null>()
-  const lastCursorRef = React.useRef<PositionType | null>()
-  const lastTouchRef = React.useRef<PositionType | null>()
+  const lastRequestAnimationIdRef = useRef<number | null>()
+  const lastTouchTimeRef = useRef<number>()
+  const lastDoubleTapTimeRef = useRef<number>()
+  const lastShiftRef = useRef<PositionTypeSimplified | null>()
+  const lastTouchDistanceRef = useRef<number | null>()
+  const lastCursorRef = useRef<PositionType | null>()
+  const lastTouchRef = useRef<PositionType | null>()
 
   // State
-  const [zoom, setZoom] = React.useState(initialZoom)
-  const [cursor, setCursor] = React.useState<CursorType>(DEFAULT_STATE.cursor)
-  const [transitionDuration, setTransitionDuration] = React.useState(props.animDuration)
-  const [posX, setPosX] = React.useState(DEFAULT_STATE.posX)
-  const [posY, setPosY] = React.useState(DEFAULT_STATE.posY)
+  const [zoom, setZoom] = useState(initialZoom)
+  const [cursor, setCursor] = useState<CursorType>(DEFAULT_STATE.cursor)
+  const [transitionDuration, setTransitionDuration] = useState(props.animDuration)
+  const [posX, setPosX] = useState(DEFAULT_STATE.posX)
+  const [posY, setPosY] = useState(DEFAULT_STATE.posY)
 
-  React.useEffect(() => {
+  useEffect(() => {
     onZoomChange?.(zoom)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [zoom])
 
-  React.useEffect(() => {
+  useEffect(() => {
     onPanChange?.({ posX, posY })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [posX, posY])
 
   // Imperative Ref methods
-  React.useImperativeHandle(forwardedRef, () => ({
+  useImperativeHandle(forwardedRef, () => ({
     getZoom,
     zoomIn,
     reset,
@@ -135,7 +135,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     setTransitionDuration(animDuration)
   }
 
-  const getNewPosition = React.useCallback(
+  const getNewPosition = useCallback(
     (x: number, y: number, newZoom: number) => {
       const [prevZoom, prevPosX, prevPosY] = [zoom, posX, posY]
 
@@ -161,7 +161,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [posX, posY, zoom]
   )
 
-  const fullZoomInOnPosition = React.useCallback(
+  const fullZoomInOnPosition = useCallback(
     (x: number, y: number) => {
       const zoom = maxZoom
       const [posX, posY] = getNewPosition(x, y, zoom)
@@ -174,7 +174,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [animDuration, getNewPosition, maxZoom]
   )
 
-  const move = React.useCallback(
+  const move = useCallback(
     (shiftX: number, shiftY: number, transitionDuration = 0) => {
       if (!ref.current) return
       let newPosX = posX
@@ -222,7 +222,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [posX, posY]
   )
 
-  const isDoubleTapping = React.useCallback(() => {
+  const isDoubleTapping = useCallback(() => {
     const touchTime = new Date().getTime()
     const isDoubleTap =
       touchTime - (lastTouchTimeRef.current ?? 0) < doubleTouchMaxDelay &&
@@ -277,7 +277,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     }
   }
 
-  const startDeceleration = React.useCallback(
+  const startDeceleration = useCallback(
     (lastShiftOnX: number, lastShiftOnY: number) => {
       let startTimestamp: number | null = null
 
@@ -305,7 +305,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [decelerationDuration, move]
   )
 
-  const reset = React.useCallback(() => {
+  const reset = useCallback(() => {
     setZoom(initialZoom)
     setCursor(DEFAULT_STATE.cursor)
     setTransitionDuration(animDuration)
@@ -325,7 +325,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     }
   }
 
-  const handleMouseWheel = React.useCallback(
+  const handleMouseWheel = useCallback(
     (event: WheelEvent) => {
       event.preventDefault()
       if (!allowZoom) return
@@ -354,7 +354,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [allowZoom, getNewPosition, maxZoom, minZoom, posX, posY, scrollVelocity, zoom]
   )
 
-  const handleMouseStart = React.useCallback(
+  const handleMouseStart = useCallback(
     (event: MouseEvent) => {
       event.preventDefault()
       if (!allowPan) return
@@ -365,7 +365,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [allowPan]
   )
 
-  const handleMouseMove = React.useCallback(
+  const handleMouseMove = useCallback(
     (event: MouseEvent) => {
       event.preventDefault()
 
@@ -383,7 +383,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [allowPan, move]
   )
 
-  const handleMouseStop = React.useCallback(
+  const handleMouseStop = useCallback(
     (event: MouseEvent) => {
       event.preventDefault()
 
@@ -399,7 +399,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [startDeceleration]
   )
 
-  const handleTouchStart = React.useCallback(
+  const handleTouchStart = useCallback(
     (event: TouchEvent) => {
       const isThisDoubleTapping = isDoubleTapping()
       const isMultiTouch = event.touches.length > 1
@@ -431,7 +431,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [allowPan, allowTouchEvents, allowZoom, fullZoomInOnPosition, isDoubleTapping, minZoom, reset, zoom]
   )
 
-  const handleTouchMove = React.useCallback(
+  const handleTouchMove = useCallback(
     (event: TouchEvent) => {
       if (!allowTouchEvents) event.preventDefault()
       if (!lastTouchRef.current) return
@@ -483,7 +483,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
     [allowTouchEvents, allowZoom, getNewPosition, lastTouchRef, maxZoom, minZoom, move, zoom]
   )
 
-  const handleTouchStop = React.useCallback(() => {
+  const handleTouchStop = useCallback(() => {
     if (lastShiftRef.current) {
       // Use the last shift to make a decelerating movement effect
       startDeceleration(lastShiftRef.current.x, lastShiftRef.current.y)
@@ -495,7 +495,7 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
   }, [startDeceleration])
 
   // Effects
-  React.useEffect(() => {
+  useEffect(() => {
     const refCurrentValue = ref.current
 
     refCurrentValue?.addEventListener('wheel', handleMouseWheel, { passive: false })
@@ -555,5 +555,3 @@ const PrismaZoom = React.forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forw
 })
 
 export default PrismaZoom
-
-export * from './types'
