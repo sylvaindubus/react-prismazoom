@@ -2,9 +2,7 @@
   "extends": "../tsconfig.json",
 
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
     "removeComments": true,
-    "preserveConstEnums": true,
     "sourceMap": true,
     "types": ["node"]
   }
