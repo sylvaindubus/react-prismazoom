@@ -10,9 +10,9 @@ Works on both desktop and mobile.
 Online demo [here!](https://sylvaindubus.github.io/react-prismazoom/)
 
 ### Zoom features :mag_right:
-* Zoom with the mouse-wheel or a two-finger pinch
+* Zoom with the mouse wheel or a two-finger pinch
 * Zoom using double-click or double-tap
-* Zoom on selected area and center
+* Zoom on the selected area and center
 
 ### Pan features :point_up_2:
 * Pan with the mouse pointer or with one finger when zoomed-in
@@ -23,12 +23,12 @@ Online demo [here!](https://sylvaindubus.github.io/react-prismazoom/)
 
 If you want to contribute, feel free to send a merge request or open a discussion. Currently, I just have time to maintain the package, but not enough to make big changes or add important features.
 
-All contribution would be quite appreciated! 😉
+All contributions would be quite appreciated! 😉
 
 Among changes I would like to apply:
-- Migrate to TypeScript
-- Transform to a functional component (that could help splitting the code)
-- Make motion logic less dependant to React
+~~- Migrate to TypeScript~~
+~~- Transform to a functional component (that could help split the code)~~
+- Make motion logic less dependent to React
 - Replace Enzyme with another testing library
 
 ## Breaking changes on v3
@@ -37,8 +37,8 @@ Among changes I would like to apply:
 
 ## Breaking changes on v2
 
-* The package now requires React v16.3 or higher (in order to use react references)
-* The zoom feature through gestures or mousewheel got some improvements to react better with all devices. You may need to adjust the `scrollVelocity` property passed to the component in order to keep the same effect.
+* The package now requires React v16.3 or higher (to use react references)
+* The zoom feature through gestures or the mouse wheel got some improvements to react better with all devices. You may need to adjust the `scrollVelocity` property passed to the component to keep the same effect.
 
 
 ## Installation
@@ -74,7 +74,7 @@ $ npm start
 
 ### Run unit tests
 
-⚠️ There is no unit tests anymore, since the previously used library is deprecated and doesn't support React 18. The current test suite need to be adapted using a different library.
+⚠️ There are no unit tests anymore since the previously used library is deprecated and doesn't support React 18. The current test suite needs to be adapted using a different library.
 
 ## Usage
 
@@ -110,30 +110,30 @@ import PrismaZoom from 'react-prismazoom'
 
 **Note:** all props are optional.
 
-### Public methods
+### Public Methods
 
 These functions can be called from parent components.
 
-**zoomIn (value)**  
-*Increments the zoom with the given value.*  
+**zoomIn (value)**
+*Increments the zoom with the given value.*
 Param {value: Number} : Zoom value
 
-**zoomOut (value)**  
-*Decrements the zoom with the given value.*  
+**zoomOut (value)**
+*Decrements the zoom with the given value.*
 Param {value: Number} : Zoom value
 
-**zoomToZone (relX, relY, relWidth, relHeight)**  
-*Zoom-in on the specified zone with the given relative coordinates and dimensions.*  
-Param {relX: Number} : Relative X position of the zone left-top corner in pixels  
-Param {relY: Number} : Relative Y position of the zone left-top corner in pixels  
-Param {relWidth: Number} : Zone width in pixels  
-Param {relHeight: Number} : Zone height in pixels
+**zoomToZone (relX, relY, relWidth, relHeight)**
+*Zoom in on the specified zone with the given relative coordinates and dimensions.*
+Param {relX: Number}: Relative X position of the zone left-top corner in pixels
+Param {relY: Number}: Relative Y position of the zone left-top corner in pixels
+Param {relWidth: Number}: Zone width in pixels
+Param {relHeight: Number}: Zone height in pixels
 
-**reset ()**  
+**reset ()**
 *Resets the component to its initial state.*
 
-**getZoom ()**  
-*Returns the current zoom value.*  
+**getZoom ()**
+*Returns the current zoom value.*
 Return {Number} : Zone value
 
 ## License

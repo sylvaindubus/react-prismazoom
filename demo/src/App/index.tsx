@@ -1,20 +1,21 @@
-import React, { ComponentRef, MouseEvent } from 'react'
+import React, { ComponentRef, MouseEvent, useCallback, useRef, useState } from 'react'
 
-import PrismaZoom from 'react-prismazoom'
+import PrismaZoom from '../../../src'
 import backgroundOne from './images/radeau-de-la-meduse.jpg'
 import backgroundTwo from './images/eruption-du-vesuve.jpg'
 import './App.css'
 
-function App() {
-  const prismaZoom = React.useRef<ComponentRef<typeof PrismaZoom>>(null)
+const App = () => {
+  const prismaZoom = useRef<ComponentRef<typeof PrismaZoom>>(null)
+  const zoomCounterRef = useRef<HTMLSpanElement>(null)
 
-  const [zoom, setZoom] = React.useState(1)
-  const [allowZoom, setAllowZoom] = React.useState(true)
-  const [allowPan, setAllowPan] = React.useState(true)
+  const [allowZoom, setAllowZoom] = useState(true)
+  const [allowPan, setAllowPan] = useState(true)
 
-  const onZoomChange = (zoom: number) => {
-    setZoom(zoom)
-  }
+  const onZoomChange = useCallback((zoom: number) => {
+    if (!zoomCounterRef.current) return
+    zoomCounterRef.current.innerText = `${Math.round(zoom * 100)}%`
+  }, [])
 
   const onClickOnZoomOut = () => {
     prismaZoom.current?.zoomOut(1)
@@ -58,7 +59,7 @@ function App() {
       </header>
 
       <section className="App-wrapper">
-        <PrismaZoom className="App-zoom" onZoomChange={onZoomChange} maxZoom={8} ref={prismaZoom}>
+        <PrismaZoom className="App-zoom" onZoomChange={onZoomChange} maxZoom={8} minZoom={1} ref={prismaZoom}>
           <div className="App-image" style={{ backgroundImage: `url(${backgroundOne})` }}></div>
           <article className="App-card" onDoubleClick={onDoubleClickOnCard}>
             <header className="App-cardHeader">
@@ -88,7 +89,9 @@ function App() {
                 <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm4-9H8a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2z" />
               </svg>
             </button>
-            <span className="App-zoomLabel">{Math.round(zoom * 100)}%</span>
+            <span className="App-zoomLabel" ref={zoomCounterRef}>
+              100%
+            </span>
             <button className="App-button" onClick={onClickOnZoomIn}>
               <svg className="App-buttonIcon" viewBox="0 0 24 24">
                 <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm4-9h-3V8a1 1 0 0 0-2 0v3H8a1 1 0 0 0 0 2h3v3a1 1 0 0 0 2 0v-3h3a1 1 0 0 0 0-2z" />

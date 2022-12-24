@@ -1,18 +1,15 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import type { CursorType, PositionType, PositionTypeSimplified, PrismaZoomProps, PrismaZoomRef } from './types'
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import type { Props, Ref, PositionType, CursorType } from './types'
 
-const DEFAULT_STATE = {
-  // Transform translateX value property
-  posX: 0,
-  // Transform translateY value property
-  posY: 0,
-  // Cursor style property
-  cursor: 'auto',
-}
+// Transform translateX ans translateY value property
+const defaultPos: PositionType = [0, 0]
 
-const HAS_MOUSE_DEVICE = window.matchMedia('(pointer: fine)').matches
+// Cursor style property
+const defaultCursor = 'auto'
 
-const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedRef) => {
+const hasMouseDevice = window.matchMedia('(pointer: fine)').matches
+
+const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
   const {
     children,
     onPanChange,
@@ -31,32 +28,57 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
     ...divProps
   } = props
 
+  // Reference to the main element
   const ref = useRef<HTMLDivElement>(null)
-
+  // Last request animation frame identifier
   const lastRequestAnimationIdRef = useRef<number | null>()
+  // Last touch time in milliseconds
   const lastTouchTimeRef = useRef<number>()
+  // Last double tap time (used to limit multiple double tap) in milliseconds
   const lastDoubleTapTimeRef = useRef<number>()
-  const lastShiftRef = useRef<PositionTypeSimplified | null>()
+  // Last shifted position
+  const lastShiftRef = useRef<PositionType | null>()
+  // Last calculated distance between two fingers in pixels
   const lastTouchDistanceRef = useRef<number | null>()
+  // Last cursor position
   const lastCursorRef = useRef<PositionType | null>()
+  // Last touch position
   const lastTouchRef = useRef<PositionType | null>()
+  // Current zoom level
+  const zoomRef = useRef(initialZoom)
+  // Current position
+  const posRef = useRef(defaultPos)
+  // Current transition duration
+  const transitionRef = useRef(animDuration)
 
-  // State
-  const [zoom, setZoom] = useState(initialZoom)
-  const [cursor, setCursor] = useState<CursorType>(DEFAULT_STATE.cursor)
-  const [transitionDuration, setTransitionDuration] = useState(props.animDuration)
-  const [posX, setPosX] = useState(DEFAULT_STATE.posX)
-  const [posY, setPosY] = useState(DEFAULT_STATE.posY)
+  const [cursor, setCursor] = useState<CursorType>(defaultCursor)
 
-  useEffect(() => {
-    onZoomChange?.(zoom)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [zoom])
+  const update = () => {
+    if (!ref.current) return
+    ref.current.style.transition = `transform ease-out ${transitionRef.current}s`
+    ref.current.style.transform = `translate3d(${posRef.current[0]}px, ${posRef.current[1]}px, 0) scale(${zoomRef.current})`
+  }
 
-  useEffect(() => {
-    onPanChange?.({ posX, posY })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [posX, posY])
+  const setZoom = (zoom: number) => {
+    zoomRef.current = zoom
+    update()
+    if (onZoomChange) {
+      onZoomChange(zoom)
+    }
+  }
+
+  const setPos = (pos: PositionType) => {
+    posRef.current = pos
+    update()
+    if (onPanChange) {
+      onPanChange({ posX: pos[0], posY: pos[1] })
+    }
+  }
+
+  const setTransitionDuration = (duration: number) => {
+    transitionRef.current = duration
+    update()
+  }
 
   // Imperative Ref methods
   useImperativeHandle(forwardedRef, () => ({
@@ -67,16 +89,23 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
     zoomToZone,
   }))
 
-  // Methods
-  const getZoom = () => zoom
+  /**
+   * Returns the current zoom value.
+   * @return {Number} Zoom value
+   */
+  const getZoom = () => zoomRef.current
 
+  /**
+   * Increments the zoom with the given value.
+   * @param  {Number} value Zoom value
+   */
   const zoomIn = (value: number) => {
-    let newPosX = posX
-    let newPosY = posY
+    let newPosX = posRef.current[0]
+    let newPosY = posRef.current[1]
 
-    const prevZoom = zoom
+    const prevZoom = zoomRef.current
 
-    const newZoom = zoom + value < maxZoom ? zoom + value : maxZoom
+    const newZoom = prevZoom + value < maxZoom ? prevZoom + value : maxZoom
 
     if (newZoom !== prevZoom) {
       newPosX = (newPosX * (newZoom - 1)) / (prevZoom > 1 ? prevZoom - 1 : prevZoom)
@@ -84,18 +113,21 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
     }
 
     setZoom(newZoom)
-    setPosX(newPosX)
-    setPosY(newPosY)
+    setPos([newPosX, newPosY])
     setTransitionDuration(animDuration)
   }
 
+  /**
+   * Decrements the zoom with the given value.
+   * @param  {Number} value Zoom value
+   */
   const zoomOut = (value: number) => {
-    let newPosX = posX
-    let newPosY = posY
+    let newPosX = posRef.current[0]
+    let newPosY = posRef.current[1]
 
-    const prevZoom = zoom
+    const prevZoom = zoomRef.current
 
-    const newZoom = zoom - value > minZoom ? zoom - value : minZoom
+    const newZoom = prevZoom - value > minZoom ? prevZoom - value : minZoom
 
     if (newZoom !== prevZoom) {
       newPosX = (newPosX * (newZoom - 1)) / (prevZoom - 1)
@@ -103,19 +135,25 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
     }
 
     setZoom(newZoom)
-    setPosX(newPosX)
-    setPosY(newPosY)
+    setPos([newPosX, newPosY])
     setTransitionDuration(animDuration)
   }
 
+  /**
+   * Zoom-in on the specified zone with the given relative coordinates and dimensions.
+   * @param  {Number} relX      Relative X position of the zone left-top corner in pixels
+   * @param  {Number} relY      Relative Y position of the zone left-top corner in pixels
+   * @param  {Number} relWidth  Zone width in pixels
+   * @param  {Number} relHeight Zone height in pixels
+   */
   const zoomToZone = (relX: number, relY: number, relWidth: number, relHeight: number) => {
     if (!ref.current) return
 
-    let newPosX = posX
-    let newPosY = posY
+    let newPosX = posRef.current[0]
+    let newPosY = posRef.current[1]
     const parentRect = (ref.current?.parentNode as HTMLElement).getBoundingClientRect()
 
-    const prevZoom = zoom
+    const prevZoom = zoomRef.current
 
     // Calculate zoom factor to scale the zone
     const optimalZoomX = parentRect.width / relWidth
@@ -130,99 +168,108 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
     newPosY = (centerY - zoneCenterY) * newZoom
 
     setZoom(newZoom)
-    setPosX(newPosX)
-    setPosY(newPosY)
+    setPos([newPosX, newPosY])
     setTransitionDuration(animDuration)
   }
 
-  const getNewPosition = useCallback(
-    (x: number, y: number, newZoom: number) => {
-      const [prevZoom, prevPosX, prevPosY] = [zoom, posX, posY]
+  /**
+   * Calculates new translate positions for CSS transformations.
+   * @param  {Number} x     Relative (rect-based) X position in pixels
+   * @param  {Number} y     Relative (rect-based) Y position in pixels
+   * @param  {Number} zoom  Scale value
+   * @return {Array}        New X and Y positions
+   */
+  const getNewPosition = (x: number, y: number, newZoom: number): PositionType => {
+    const [prevZoom, prevPosX, prevPosY] = [zoomRef.current, posRef.current[0], posRef.current[1]]
 
-      if (newZoom === 1 || !ref.current) return [0, 0]
+    if (newZoom === 1 || !ref.current) return [0, 0]
 
-      if (newZoom > prevZoom) {
-        // Get container coordinates
-        const rect = ref.current.getBoundingClientRect()
-
-        // Retrieve rectangle dimensions and mouse position
-        const [centerX, centerY] = [rect.width / 2, rect.height / 2]
-        const [relativeX, relativeY] = [x - rect.left - window.pageXOffset, y - rect.top - window.pageYOffset]
-
-        // If we are zooming down, we must try to center to mouse position
-        const [absX, absY] = [(centerX - relativeX) / prevZoom, (centerY - relativeY) / prevZoom]
-        const ratio = newZoom - prevZoom
-        return [prevPosX + absX * ratio, prevPosY + absY * ratio]
-      } else {
-        // If we are zooming down, we shall re-center the element
-        return [(prevPosX * (newZoom - 1)) / (prevZoom - 1), (prevPosY * (newZoom - 1)) / (prevZoom - 1)]
-      }
-    },
-    [posX, posY, zoom]
-  )
-
-  const fullZoomInOnPosition = useCallback(
-    (x: number, y: number) => {
-      const zoom = maxZoom
-      const [posX, posY] = getNewPosition(x, y, zoom)
-
-      setZoom(zoom)
-      setPosX(posX)
-      setPosY(posY)
-      setTransitionDuration(animDuration)
-    },
-    [animDuration, getNewPosition, maxZoom]
-  )
-
-  const move = useCallback(
-    (shiftX: number, shiftY: number, transitionDuration = 0) => {
-      if (!ref.current) return
-      let newPosX = posX
-      let newPosY = posY
-
-      // Get container and container's parent coordinates
+    if (newZoom > prevZoom) {
+      // Get container coordinates
       const rect = ref.current.getBoundingClientRect()
-      const parentRect = (ref.current.parentNode as HTMLElement).getBoundingClientRect()
 
-      const [isLarger, isOutLeftBoundary, isOutRightBoundary] = [
-        // Check if the element is larger than its container
-        rect.width > parentRect.right - parentRect.left,
-        // Check if the element is out its container left boundary
-        shiftX > 0 && rect.left - parentRect.left < 0,
-        // Check if the element is out its container right boundary
-        shiftX < 0 && rect.right - parentRect.right > 0,
-      ]
+      // Retrieve rectangle dimensions and mouse position
+      const [centerX, centerY] = [rect.width / 2, rect.height / 2]
+      const [relativeX, relativeY] = [x - rect.left - window.pageXOffset, y - rect.top - window.pageYOffset]
 
-      const canMoveOnX = isLarger || isOutLeftBoundary || isOutRightBoundary
-      if (canMoveOnX) {
-        newPosX += getLimitedShift(shiftX, parentRect.left, parentRect.right, rect.left, rect.right)
-      }
+      // If we are zooming down, we must try to center to mouse position
+      const [absX, absY] = [(centerX - relativeX) / prevZoom, (centerY - relativeY) / prevZoom]
+      const ratio = newZoom - prevZoom
+      return [prevPosX + absX * ratio, prevPosY + absY * ratio]
+    } else {
+      // If we are zooming down, we shall re-center the element
+      return [(prevPosX * (newZoom - 1)) / (prevZoom - 1), (prevPosY * (newZoom - 1)) / (prevZoom - 1)]
+    }
+  }
 
-      const [isHigher, isOutTopBoundary, isOutBottomBoundary] = [
-        // Check if the element is higher than its container
-        rect.height > parentRect.bottom - parentRect.top,
-        // Check if the element is out its container top boundary
-        shiftY > 0 && rect.top - parentRect.top < 0,
-        // Check if the element is out its container bottom boundary
-        shiftY < 0 && rect.bottom - parentRect.bottom > 0,
-      ]
+  /**
+   * Applies a full-zoom on the specified X and Y positions
+   * @param  {Number} x Relative (rect-based) X position in pixels
+   * @param  {Number} y Relative (rect-based) Y position in pixels
+   */
+  const fullZoomInOnPosition = (x: number, y: number) => {
+    const zoom = maxZoom
 
-      const canMoveOnY = isHigher || isOutTopBoundary || isOutBottomBoundary
-      if (canMoveOnY) {
-        newPosY += getLimitedShift(shiftY, parentRect.top, parentRect.bottom, rect.top, rect.bottom)
-      }
+    setZoom(zoom)
+    setPos(getNewPosition(x, y, zoom))
+    setTransitionDuration(animDuration)
+  }
 
-      const cursor = getCursor(canMoveOnX, canMoveOnY)
+  /**
+   * Moves the element by incrementing its position with given X and Y values.
+   * @param  {Number} shiftX             Position change to apply on X axis in pixels
+   * @param  {Number} shiftY             Position change to apply on Y axis in pixels
+   * @param  {Number} transitionDuration Transition duration (in seconds)
+   */
+  const move = (shiftX: number, shiftY: number, transitionDuration = 0) => {
+    if (!ref.current) return
+    let newPosX = posRef.current[0]
+    let newPosY = posRef.current[1]
 
-      setPosX(newPosX)
-      setPosY(newPosY)
-      setCursor(cursor)
-      setTransitionDuration(transitionDuration)
-    },
-    [posX, posY]
-  )
+    // Get container and container's parent coordinates
+    const rect = ref.current.getBoundingClientRect()
+    const parentRect = (ref.current.parentNode as HTMLElement).getBoundingClientRect()
 
-  const isDoubleTapping = useCallback(() => {
+    const [isLarger, isOutLeftBoundary, isOutRightBoundary] = [
+      // Check if the element is larger than its container
+      rect.width > parentRect.right - parentRect.left,
+      // Check if the element is out its container left boundary
+      shiftX > 0 && rect.left - parentRect.left < 0,
+      // Check if the element is out its container right boundary
+      shiftX < 0 && rect.right - parentRect.right > 0,
+    ]
+
+    const canMoveOnX = isLarger || isOutLeftBoundary || isOutRightBoundary
+    if (canMoveOnX) {
+      newPosX += getLimitedShift(shiftX, parentRect.left, parentRect.right, rect.left, rect.right)
+    }
+
+    const [isHigher, isOutTopBoundary, isOutBottomBoundary] = [
+      // Check if the element is higher than its container
+      rect.height > parentRect.bottom - parentRect.top,
+      // Check if the element is out its container top boundary
+      shiftY > 0 && rect.top - parentRect.top < 0,
+      // Check if the element is out its container bottom boundary
+      shiftY < 0 && rect.bottom - parentRect.bottom > 0,
+    ]
+
+    const canMoveOnY = isHigher || isOutTopBoundary || isOutBottomBoundary
+    if (canMoveOnY) {
+      newPosY += getLimitedShift(shiftY, parentRect.top, parentRect.bottom, rect.top, rect.bottom)
+    }
+
+    const cursor = getCursor(canMoveOnX, canMoveOnY)
+
+    setPos([newPosX, newPosY])
+    setCursor(cursor)
+    setTransitionDuration(transitionDuration)
+  }
+
+  /**
+   * Check if the user is doing a double tap gesture.
+   * @return {Boolean} Result of the checking
+   */
+  const isDoubleTapping = () => {
     const touchTime = new Date().getTime()
     const isDoubleTap =
       touchTime - (lastTouchTimeRef.current ?? 0) < doubleTouchMaxDelay &&
@@ -235,8 +282,17 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
 
     lastTouchTimeRef.current = touchTime
     return false
-  }, [doubleTouchMaxDelay])
+  }
 
+  /**
+   * Calculates the narrowed shift for panning actions.
+   * @param  {Number} shift      Initial shift in pixels
+   * @param  {Number} minLimit   Minimum limit (left or top) in pixels
+   * @param  {Number} maxLimit   Maximum limit (right or bottom) in pixels
+   * @param  {Number} minElement Left or top element position in pixels
+   * @param  {Number} maxElement Right or bottom element position in pixels
+   * @return {Number}            Narrowed shift
+   */
   const getLimitedShift = (
     shift: number,
     minLimit: number,
@@ -277,229 +333,240 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
     }
   }
 
-  const startDeceleration = useCallback(
-    (lastShiftOnX: number, lastShiftOnY: number) => {
-      let startTimestamp: number | null = null
+  /**
+   * Trigger a decelerating movement after a mouse up or a touch end event, using the last movement shift.
+   * @param  {Number} lastShiftOnX Last shift on the X axis in pixels
+   * @param  {Number} lastShiftOnY Last shift on the Y axis in pixels
+   */
+  const startDeceleration = (lastShiftOnX: number, lastShiftOnY: number) => {
+    let startTimestamp: number | null = null
 
-      const startDecelerationMove = (timestamp: number) => {
-        if (startTimestamp === null) startTimestamp = timestamp
+    const startDecelerationMove = (timestamp: number) => {
+      if (startTimestamp === null) startTimestamp = timestamp
 
-        const progress = timestamp - startTimestamp
+      const progress = timestamp - startTimestamp
 
-        // Calculates the ratio to apply on the move (used to create a non-linear deceleration)
-        const ratio = (decelerationDuration - progress) / decelerationDuration
+      // Calculates the ratio to apply on the move (used to create a non-linear deceleration)
+      const ratio = (decelerationDuration - progress) / decelerationDuration
 
-        const [shiftX, shiftY] = [lastShiftOnX * ratio, lastShiftOnY * ratio]
+      const [shiftX, shiftY] = [lastShiftOnX * ratio, lastShiftOnY * ratio]
 
-        // Continue animation only if time has not expired and if there is still some movement (more than 1 pixel on one axis)
-        if (progress < decelerationDuration && Math.max(Math.abs(shiftX), Math.abs(shiftY)) > 1) {
-          move(shiftX, shiftY, 0)
-          lastRequestAnimationIdRef.current = requestAnimationFrame(startDecelerationMove)
-        } else {
-          lastRequestAnimationIdRef.current = null
-        }
+      // Continue animation only if time has not expired and if there is still some movement (more than 1 pixel on one axis)
+      if (progress < decelerationDuration && Math.max(Math.abs(shiftX), Math.abs(shiftY)) > 1) {
+        move(shiftX, shiftY, 0)
+        lastRequestAnimationIdRef.current = requestAnimationFrame(startDecelerationMove)
+      } else {
+        lastRequestAnimationIdRef.current = null
       }
+    }
 
-      lastRequestAnimationIdRef.current = requestAnimationFrame(startDecelerationMove)
-    },
-    [decelerationDuration, move]
-  )
+    lastRequestAnimationIdRef.current = requestAnimationFrame(startDecelerationMove)
+  }
 
-  const reset = useCallback(() => {
+  /**
+   * Resets the component to its initial state.
+   */
+  const reset = () => {
     setZoom(initialZoom)
-    setCursor(DEFAULT_STATE.cursor)
+    setCursor(defaultCursor)
     setTransitionDuration(animDuration)
-    setPosX(DEFAULT_STATE.posX)
-    setPosY(DEFAULT_STATE.posY)
-  }, [animDuration, initialZoom])
+    setPos(defaultPos)
+  }
 
-  // Handlers
+  /**
+   * Event handler on double click.
+   * @param  {MouseEvent} event Mouse event
+   */
   const handleDoubleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
     if (!allowZoom) return
 
-    if (zoom === minZoom) {
+    if (zoomRef.current === minZoom) {
       fullZoomInOnPosition(event.pageX, event.pageY)
     } else {
       reset()
     }
   }
 
-  const handleMouseWheel = useCallback(
-    (event: WheelEvent) => {
-      event.preventDefault()
-      if (!allowZoom) return
+  /**
+   * Event handler on scroll.
+   * @param  {MouseEvent} event Mouse event
+   */
+  const handleMouseWheel = (event: WheelEvent) => {
+    event.preventDefault()
+    if (!allowZoom) return
 
-      // Use the scroll event delta to determine the zoom velocity
-      const velocity = (-event.deltaY * scrollVelocity) / 100
+    // Use the scroll event delta to determine the zoom velocity
+    const velocity = (-event.deltaY * scrollVelocity) / 100
 
-      // Set the new zoom level
-      const newZoom = Math.max(Math.min(zoom + velocity, maxZoom), minZoom)
+    // Set the new zoom level
+    const newZoom = Math.max(Math.min(zoomRef.current + velocity, maxZoom), minZoom)
 
-      let position: number[] = [posX, posY]
+    let newPosition = posRef.current
+    if (newZoom !== zoomRef.current) {
+      newPosition = newZoom !== minZoom ? getNewPosition(event.pageX, event.pageY, newZoom) : defaultPos
+    }
 
-      if (newZoom !== zoom) {
-        position =
-          newZoom !== minZoom
-            ? getNewPosition(event.pageX, event.pageY, newZoom)
-            : [DEFAULT_STATE.posX, DEFAULT_STATE.posY]
-      }
+    setZoom(newZoom)
+    setPos(newPosition)
+    setTransitionDuration(0.05)
+  }
 
-      setZoom(newZoom)
-      setTransitionDuration(0.05)
-      const [newPosX, newPosY] = position
-      setPosX(newPosX)
-      setPosY(newPosY)
-    },
-    [allowZoom, getNewPosition, maxZoom, minZoom, posX, posY, scrollVelocity, zoom]
-  )
+  /**
+   * Event handler on mouse down.
+   * @param  {MouseEvent} event Mouse event
+   */
+  const handleMouseStart = (event: MouseEvent) => {
+    event.preventDefault()
+    if (!allowPan) return
 
-  const handleMouseStart = useCallback(
-    (event: MouseEvent) => {
-      event.preventDefault()
-      if (!allowPan) return
+    if (lastRequestAnimationIdRef.current) cancelAnimationFrame(lastRequestAnimationIdRef.current)
+    lastCursorRef.current = [event.pageX, event.pageY]
+  }
 
-      if (lastRequestAnimationIdRef.current) cancelAnimationFrame(lastRequestAnimationIdRef.current)
-      lastCursorRef.current = { posX: event.pageX, posY: event.pageY }
-    },
-    [allowPan]
-  )
+  /**
+   * Event handler on mouse move.
+   * @param  {MouseEvent} event Mouse event
+   */
+  const handleMouseMove = (event: MouseEvent) => {
+    event.preventDefault()
 
-  const handleMouseMove = useCallback(
-    (event: MouseEvent) => {
-      event.preventDefault()
+    if (!allowPan || !lastCursorRef.current) return
 
-      if (!allowPan || !lastCursorRef.current) return
+    const [posX, posY] = [event.pageX, event.pageY]
+    const shiftX = posX - lastCursorRef.current[0]
+    const shiftY = posY - lastCursorRef.current[1]
 
-      const [posX, posY] = [event.pageX, event.pageY]
-      const shiftX = posX - lastCursorRef.current.posX
-      const shiftY = posY - lastCursorRef.current.posY
+    move(shiftX, shiftY, 0)
 
-      move(shiftX, shiftY, 0)
+    lastCursorRef.current = [posX, posY]
+    lastShiftRef.current = [shiftX, shiftY]
+  }
 
-      lastCursorRef.current = { posX, posY }
-      lastShiftRef.current = { x: shiftX, y: shiftY }
-    },
-    [allowPan, move]
-  )
+  /**
+   * Event handler on mouse up or mouse out.
+   * @param  {MouseEvent} event Mouse event
+   */
+  const handleMouseStop = (event: MouseEvent) => {
+    event.preventDefault()
 
-  const handleMouseStop = useCallback(
-    (event: MouseEvent) => {
-      event.preventDefault()
-
-      if (lastShiftRef.current) {
-        // Use the last shift to make a decelerating movement effect
-        startDeceleration(lastShiftRef.current.x, lastShiftRef.current.y)
-        lastShiftRef.current = null
-      }
-
-      lastCursorRef.current = null
-      setCursor('auto')
-    },
-    [startDeceleration]
-  )
-
-  const handleTouchStart = useCallback(
-    (event: TouchEvent) => {
-      const isThisDoubleTapping = isDoubleTapping()
-      const isMultiTouch = event.touches.length > 1
-
-      if (!allowTouchEvents) event.preventDefault()
-
-      if (lastRequestAnimationIdRef.current) cancelAnimationFrame(lastRequestAnimationIdRef.current)
-
-      const [posX, posY] = [event.touches[0].pageX, event.touches[0].pageY]
-
-      if (isMultiTouch) {
-        lastTouchRef.current = { posX, posY }
-        return
-      }
-
-      if (isThisDoubleTapping && allowZoom) {
-        if (zoom === minZoom) {
-          fullZoomInOnPosition(posX, posY)
-        } else {
-          reset()
-        }
-
-        return
-      }
-
-      // Don't save the last touch if we are starting a simple touch move while panning is disabled
-      if (allowPan) lastTouchRef.current = { posX, posY }
-    },
-    [allowPan, allowTouchEvents, allowZoom, fullZoomInOnPosition, isDoubleTapping, minZoom, reset, zoom]
-  )
-
-  const handleTouchMove = useCallback(
-    (event: TouchEvent) => {
-      if (!allowTouchEvents) event.preventDefault()
-      if (!lastTouchRef.current) return
-
-      if (event.touches.length === 1) {
-        const [posX, posY] = [event.touches[0].pageX, event.touches[0].pageY]
-        // If we detect only one point, we shall just move the element
-        const shiftX = posX - lastTouchRef.current.posX
-        const shiftY = posY - lastTouchRef.current.posY
-
-        move(shiftX, shiftY)
-        lastShiftRef.current = { x: shiftX, y: shiftY }
-
-        // Save data for the next move
-        lastTouchRef.current = { posX, posY }
-        lastTouchDistanceRef.current = null
-      } else if (event.touches.length > 1) {
-        let newZoom = zoom
-        // If we detect two points, we shall zoom up or down
-        const [pos1X, pos1Y] = [event.touches[0].pageX, event.touches[0].pageY]
-        const [pos2X, pos2Y] = [event.touches[1].pageX, event.touches[1].pageY]
-        const distance = Math.sqrt(Math.pow(pos2X - pos1X, 2) + Math.pow(pos2Y - pos1Y, 2))
-
-        if (lastTouchDistanceRef.current && distance && distance !== lastTouchDistanceRef.current) {
-          if (allowZoom) {
-            newZoom += (distance - lastTouchDistanceRef.current) / 100
-            if (newZoom > maxZoom) {
-              newZoom = maxZoom
-            } else if (newZoom < minZoom) {
-              newZoom = minZoom
-            }
-          }
-
-          // Change position using the center point between the two fingers
-          const [centerX, centerY] = [(pos1X + pos2X) / 2, (pos1Y + pos2Y) / 2]
-          const [posX, posY] = getNewPosition(centerX, centerY, newZoom)
-
-          setZoom(newZoom)
-          setPosX(posX)
-          setPosY(posY)
-          setTransitionDuration(0)
-        }
-
-        // Save data for the next move
-        lastTouchRef.current = { posX: pos1X, posY: pos1Y }
-        lastTouchDistanceRef.current = distance
-      }
-    },
-    [allowTouchEvents, allowZoom, getNewPosition, lastTouchRef, maxZoom, minZoom, move, zoom]
-  )
-
-  const handleTouchStop = useCallback(() => {
     if (lastShiftRef.current) {
       // Use the last shift to make a decelerating movement effect
-      startDeceleration(lastShiftRef.current.x, lastShiftRef.current.y)
+      startDeceleration(lastShiftRef.current[0], lastShiftRef.current[1])
+      lastShiftRef.current = null
+    }
+
+    lastCursorRef.current = null
+    setCursor('auto')
+  }
+
+  /**
+   * Event handler on touch start.
+   * Zoom-in at the maximum scale if a double tap is detected.
+   * @param  {TouchEvent} event Touch event
+   */
+  const handleTouchStart = (event: TouchEvent) => {
+    const isThisDoubleTapping = isDoubleTapping()
+    const isMultiTouch = event.touches.length > 1
+
+    if (!allowTouchEvents) event.preventDefault()
+
+    if (lastRequestAnimationIdRef.current) cancelAnimationFrame(lastRequestAnimationIdRef.current)
+
+    const [posX, posY] = [event.touches[0].pageX, event.touches[0].pageY]
+
+    if (isMultiTouch) {
+      lastTouchRef.current = [posX, posY]
+      return
+    }
+
+    if (isThisDoubleTapping && allowZoom) {
+      if (zoomRef.current === minZoom) {
+        fullZoomInOnPosition(posX, posY)
+      } else {
+        reset()
+      }
+
+      return
+    }
+
+    // Don't save the last touch if we are starting a simple touch move while panning is disabled
+    if (allowPan) lastTouchRef.current = [posX, posY]
+  }
+
+  /**
+   * Event handler on touch move.
+   * Either move the element using one finger or zoom-in with a two finger pinch.
+   * @param  {TouchEvent} event Touch move
+   */
+  const handleTouchMove = (event: TouchEvent) => {
+    if (!allowTouchEvents) event.preventDefault()
+    if (!lastTouchRef.current) return
+
+    if (event.touches.length === 1) {
+      const [posX, posY] = [event.touches[0].pageX, event.touches[0].pageY]
+      // If we detect only one point, we shall just move the element
+      const shiftX = posX - lastTouchRef.current[0]
+      const shiftY = posY - lastTouchRef.current[1]
+
+      move(shiftX, shiftY)
+      lastShiftRef.current = [shiftX, shiftY]
+
+      // Save data for the next move
+      lastTouchRef.current = [posX, posY]
+      lastTouchDistanceRef.current = null
+    } else if (event.touches.length > 1) {
+      let newZoom = zoomRef.current
+      // If we detect two points, we shall zoom up or down
+      const [pos1X, pos1Y] = [event.touches[0].pageX, event.touches[0].pageY]
+      const [pos2X, pos2Y] = [event.touches[1].pageX, event.touches[1].pageY]
+      const distance = Math.sqrt(Math.pow(pos2X - pos1X, 2) + Math.pow(pos2Y - pos1Y, 2))
+
+      if (lastTouchDistanceRef.current && distance && distance !== lastTouchDistanceRef.current) {
+        if (allowZoom) {
+          newZoom += (distance - lastTouchDistanceRef.current) / 100
+          if (newZoom > maxZoom) {
+            newZoom = maxZoom
+          } else if (newZoom < minZoom) {
+            newZoom = minZoom
+          }
+        }
+
+        // Change position using the center point between the two fingers
+        const [centerX, centerY] = [(pos1X + pos2X) / 2, (pos1Y + pos2Y) / 2]
+        const newPos = getNewPosition(centerX, centerY, newZoom)
+
+        setZoom(newZoom)
+        setPos(newPos)
+        setTransitionDuration(0)
+      }
+
+      // Save data for the next move
+      lastTouchRef.current = [pos1X, pos1Y]
+      lastTouchDistanceRef.current = distance
+    }
+  }
+
+  /**
+   * Event handler on touch end or touch cancel.
+   * @param  {TouchEvent} event Touch move
+   */
+  const handleTouchStop = () => {
+    if (lastShiftRef.current) {
+      // Use the last shift to make a decelerating movement effect
+      startDeceleration(lastShiftRef.current[0], lastShiftRef.current[1])
       lastShiftRef.current = null
     }
 
     lastTouchRef.current = null
     lastTouchDistanceRef.current = null
-  }, [startDeceleration])
+  }
 
-  // Effects
   useEffect(() => {
     const refCurrentValue = ref.current
 
     refCurrentValue?.addEventListener('wheel', handleMouseWheel, { passive: false })
-    if (HAS_MOUSE_DEVICE) {
+    if (hasMouseDevice) {
       // Apply mouse events only to devices which include an accurate pointing device
       refCurrentValue?.addEventListener('mousedown', handleMouseStart, { passive: false })
       refCurrentValue?.addEventListener('mousemove', handleMouseMove, { passive: false })
@@ -515,7 +582,7 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
 
     return () => {
       refCurrentValue?.removeEventListener('wheel', handleMouseWheel)
-      if (HAS_MOUSE_DEVICE) {
+      if (hasMouseDevice) {
         refCurrentValue?.removeEventListener('mousedown', handleMouseStart)
         refCurrentValue?.removeEventListener('mousemove', handleMouseMove)
         refCurrentValue?.removeEventListener('mouseup', handleMouseStop)
@@ -527,15 +594,7 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
         refCurrentValue?.removeEventListener('touchcancel', handleTouchStop)
       }
     }
-  }, [
-    handleMouseMove,
-    handleMouseStart,
-    handleMouseStop,
-    handleMouseWheel,
-    handleTouchMove,
-    handleTouchStart,
-    handleTouchStop,
-  ])
+  }, [])
 
   const attr = {
     ...divProps,
@@ -545,9 +604,9 @@ const PrismaZoom = forwardRef<PrismaZoomRef, PrismaZoomProps>((props, forwardedR
       ...divProps.style,
       cursor: cursor,
       willChange: 'transform',
-      transition: `transform ease-out ${transitionDuration}s`,
-      touchAction: allowParentPanning && zoom === 1 ? 'pan-x pan-y' : 'none',
-      transform: `translate3d(${posX}px, ${posY}px, 0) scale(${zoom})`,
+      transition: `transform ease-out ${transitionRef.current}s`,
+      touchAction: allowParentPanning && zoomRef.current === 1 ? 'pan-x pan-y' : 'none',
+      transform: `translate3d(${posRef.current[0]}px, ${posRef.current[1]}px, 0) scale(${zoomRef.current})`,
     },
   }
 
