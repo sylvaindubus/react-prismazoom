@@ -7,3 +7,4 @@ tests
 .nvmrc
 .prettierignore
 .prettierrc
+tsconfig.json
