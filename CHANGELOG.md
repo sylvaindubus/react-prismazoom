@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.2.0] - 2022-12-29
+- Refactor codebase to Typescript and functional components (thanks erickriva)
+- Switch to parcel as build tool
+- Improve performances
+- Bump some dependencies
+
 ## [3.1.1] - 2022-11-20
 - Bump some dependencies
 

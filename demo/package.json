@@ -2,7 +2,7 @@
   "name": "demo",
   "scripts": {
     "start": "parcel index.html --no-cache",
-    "build": "parcel build index.html",
+    "build": "parcel build index.html --public-url ./",
     "publish": "npm run build && gh-pages -d dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
