@@ -58,6 +58,10 @@ export type Props = NonNullable<React.PropsWithChildren> &
      * By default, page cannot scroll with touch events
      */
     allowParentPanning?: boolean
+    /**
+     * Enable or disable mouse wheel and touchpad zooming in place
+     */
+    allowWheel?: boolean
   }
 
 export type PositionType = [number, number]
