@@ -7,8 +7,6 @@ const defaultPos: PositionType = [0, 0]
 // Cursor style property
 const defaultCursor = 'auto'
 
-const hasMouseDevice = window.matchMedia('(pointer: fine)').matches
-
 const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
   const {
     children,
@@ -565,6 +563,7 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
 
   useEffect(() => {
     const refCurrentValue = ref.current
+    const hasMouseDevice = window.matchMedia('(pointer: fine)').matches
 
     refCurrentValue?.addEventListener('wheel', handleMouseWheel, { passive: false })
     if (hasMouseDevice) {
