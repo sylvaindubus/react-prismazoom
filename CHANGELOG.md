@@ -1,9 +1,11 @@
 # Changelog
 
-## [3.2.0] - 2022-12-29
+## [3.2.0] - 2023-02-24
 - Refactor codebase to Typescript and functional components (thanks erickriva)
-- Switch to parcel as build tool
+- Switch to parcel as build tool (thanks erickriva)
 - Improve performances
+- Added custom prop to disable mouse wheel (thanks JenniferGoijman)
+- Fixed an issue when using SSR (thanks gregorjan)
 - Bump some dependencies
 
 ## [3.1.1] - 2022-11-20
