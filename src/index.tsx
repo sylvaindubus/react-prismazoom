@@ -209,8 +209,8 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
   const fullZoomInOnPosition = (x: number, y: number) => {
     const zoom = maxZoom
 
-    setZoom(zoom)
     setPos(getNewPosition(x, y, zoom))
+    setZoom(zoom)
     setTransitionDuration(animDuration)
   }
 
