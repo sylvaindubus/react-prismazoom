@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.2.1] - 2023-02-24
+- Fix double-click zoom target
+
 ## [3.2.0] - 2023-02-24
 - Refactor codebase to Typescript and functional components (thanks erickriva)
 - Switch to parcel as build tool (thanks erickriva)
