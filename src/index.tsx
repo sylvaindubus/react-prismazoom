@@ -26,6 +26,7 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
     allowTouchEvents = false,
     allowParentPanning = false,
     allowWheel = true,
+    ignoredMouseButtons = [],
     ...divProps
   } = props
 
@@ -419,7 +420,7 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
    */
   const handleMouseStart = (event: MouseEvent) => {
     event.preventDefault()
-    if (!allowPan) return
+    if (!allowPan || ignoredMouseButtons.includes(event.button)) return
 
     if (lastRequestAnimationIdRef.current) cancelAnimationFrame(lastRequestAnimationIdRef.current)
     lastCursorRef.current = [event.pageX, event.pageY]
