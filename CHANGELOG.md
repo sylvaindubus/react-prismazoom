@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.3.0] - 2023-03-01
+- Added optional ignoredMouseButtons prop (thanks apomelitos)
+
 ## [3.2.1] - 2023-02-24
 - Fix double-click zoom target
 
