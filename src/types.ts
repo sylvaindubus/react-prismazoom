@@ -62,6 +62,11 @@ export type Props = NonNullable<React.PropsWithChildren> &
      * Enable or disable mouse wheel and touchpad zooming in place
      */
     allowWheel?: boolean
+    /**
+     * Optional array of ignored mouse buttons allows to prevent panning for specific mouse buttons. By default all mouse buttons are enabled
+     * https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button#value
+     */
+    ignoredMouseButtons?: number[]
   }
 
 export type PositionType = [number, number]

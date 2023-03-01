@@ -108,6 +108,7 @@ import PrismaZoom from 'react-prismazoom'
 | allowTouchEvents | boolean | false | Enables touch event propagation. |
 | allowParentPanning | boolean | false | When enabled, allows the parent element/page to pan with single-finger touch events as long as zoom = 1. |
 | allowWheel | boolean | true | Enable or disable mouse wheel and touchpad zooming in place |
+| ignoredMouseButtons | number[] | [] | Optional array of ignored mouse buttons allows to prevent panning for specific mouse buttons. By default all mouse buttons are enabled. [MDN](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button#value) |
 
 **Note:** all props are optional.
 
