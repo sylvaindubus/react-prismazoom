@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.3.1] - 2023-03-02
+- Build fix
+
 ## [3.3.0] - 2023-03-01
 - Added optional ignoredMouseButtons prop (thanks apomelitos)
 
