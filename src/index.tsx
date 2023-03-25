@@ -80,15 +80,6 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
     update()
   }
 
-  // Imperative Ref methods
-  useImperativeHandle(forwardedRef, () => ({
-    getZoom,
-    zoomIn,
-    reset,
-    zoomOut,
-    zoomToZone,
-  }))
-
   /**
    * Returns the current zoom value.
    * @return {Number} Zoom value
@@ -561,6 +552,16 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
     lastTouchRef.current = null
     lastTouchDistanceRef.current = null
   }
+
+  // Imperative Ref methods
+  useImperativeHandle(forwardedRef, () => ({
+    getZoom,
+    zoomIn,
+    reset,
+    move,
+    zoomOut,
+    zoomToZone,
+  }))
 
   useEffect(() => {
     const refCurrentValue = ref.current
