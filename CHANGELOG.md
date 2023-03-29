@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.3.3] - 2023-03-29
+- Add the move method to the ref type object
+
 ## [3.3.2] - 2023-03-25
 - Add access to the move method from the ref object
 
