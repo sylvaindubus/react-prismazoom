@@ -2,6 +2,7 @@ export type Ref = {
   getZoom: () => number
   zoomIn: (zoom: number) => void
   zoomOut: (zoom: number) => void
+  move: (shiftX: number, shiftY: number, transitionDuration?: number) => void
   reset: VoidFunction
   zoomToZone: (relX: number, relY: number, relWidth: number, relHeight: number) => void
 }
