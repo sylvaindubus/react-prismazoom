@@ -384,8 +384,8 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
    * @param  {MouseEvent} event Mouse event
    */
   const handleMouseWheel = (event: WheelEvent) => {
-    event.preventDefault()
     if (!allowZoom || !allowWheel) return
+    event.preventDefault()
 
     // Use the scroll event delta to determine the zoom velocity
     const velocity = (-event.deltaY * scrollVelocity) / 100
@@ -408,8 +408,8 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
    * @param  {MouseEvent} event Mouse event
    */
   const handleMouseStart = (event: MouseEvent) => {
-    event.preventDefault()
     if (!allowPan || ignoredMouseButtons.includes(event.button)) return
+    event.preventDefault()
 
     if (lastRequestAnimationIdRef.current) cancelAnimationFrame(lastRequestAnimationIdRef.current)
     lastCursorRef.current = [event.pageX, event.pageY]
@@ -420,9 +420,8 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
    * @param  {MouseEvent} event Mouse event
    */
   const handleMouseMove = (event: MouseEvent) => {
-    event.preventDefault()
-
     if (!allowPan || !lastCursorRef.current) return
+    event.preventDefault()
 
     const [posX, posY] = [event.pageX, event.pageY]
     const shiftX = posX - lastCursorRef.current[0]
