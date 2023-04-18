@@ -595,7 +595,7 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
         refCurrentValue?.removeEventListener('touchcancel', handleTouchStop)
       }
     }
-  }, [])
+  }, [allowWheel, allowZoom, allowPan])
 
   const attr = {
     ...divProps,
