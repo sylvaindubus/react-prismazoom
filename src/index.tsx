@@ -602,12 +602,12 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
     ref,
     onDoubleClick: handleDoubleClick,
     style: {
-      ...divProps.style,
       cursor: cursor,
       willChange: 'transform',
       transition: `transform ease-out ${transitionRef.current}s`,
       touchAction: allowParentPanning && zoomRef.current === 1 ? 'pan-x pan-y' : 'none',
       transform: `translate3d(${posRef.current[0]}px, ${posRef.current[1]}px, 0) scale(${zoomRef.current})`,
+      ...divProps.style,
     },
   }
 
