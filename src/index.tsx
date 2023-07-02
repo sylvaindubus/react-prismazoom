@@ -561,6 +561,8 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
     move,
     zoomOut,
     zoomToZone,
+    setZoom,
+    setPos,
   }))
 
   useEffect(() => {
