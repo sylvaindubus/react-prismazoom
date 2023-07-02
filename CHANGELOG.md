@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.3.4] - 2023-07-02
+- Expose setZoom and setPos methods
+
 ## [3.3.3] - 2023-03-29
 - Add the move method to the ref type object
 
