@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.3.5] - 2023-08-12
+- Fix hebavior of `allowPan` and `allowZoom` props (thanks [Robert Brownstein](https://github.com/rbrownstein-bd))
+
 ## [3.3.4] - 2023-07-02
 - Expose setZoom and setPos methods
 
