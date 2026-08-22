@@ -7,9 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "gh-pages": "^3.2.3",
-    "parcel": "^2.8.2",
-    "parcel-bundler": "^1.12.5",
+    "gh-pages": "^6.3.0",
+    "parcel": "^2.16.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

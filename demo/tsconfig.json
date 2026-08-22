@@ -1,6 +1,8 @@
 {
   "extends": "../tsconfig.json",
+  "include": ["src/**/*", "types.d.ts", "../src/index.tsx", "../src/types.ts"],
   "compilerOptions": {
+    "rootDir": "..",
     "removeComments": true,
     "sourceMap": true,
     "types": ["node"]

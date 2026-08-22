@@ -1,9 +1,10 @@
-import React, { ComponentRef, MouseEvent, useCallback, useRef, useState } from 'react'
+import { ComponentRef, MouseEvent, useCallback, useRef, useState } from 'react'
 
 import PrismaZoom from '../../../src'
-import backgroundOne from './images/radeau-de-la-meduse.jpg'
-import backgroundTwo from './images/eruption-du-vesuve.jpg'
 import './App.css'
+
+const backgroundOne = new URL('./images/radeau-de-la-meduse.jpg', import.meta.url).toString()
+const backgroundTwo = new URL('./images/eruption-du-vesuve.jpg', import.meta.url).toString()
 
 const App = () => {
   const prismaZoom = useRef<ComponentRef<typeof PrismaZoom>>(null)
