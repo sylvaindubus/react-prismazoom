@@ -26,8 +26,9 @@ If you want to contribute, feel free to send a merge request or open a discussio
 All contributions would be quite appreciated! 😉
 
 Among changes I would like to apply:
-~~- Migrate to TypeScript~~
-~~- Transform to a functional component (that could help split the code)~~
+
+- ~~Migrate to TypeScript~~
+- ~~Transform to a functional component (that could help split the code)~~
 - Make motion logic less dependent to React
 - Replace Enzyme with another testing library
 
