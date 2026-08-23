@@ -1,6 +1,7 @@
 src
 demo
 tests
+.vscode
 .babelrc
 .eslintrc.json
 .gitignore
