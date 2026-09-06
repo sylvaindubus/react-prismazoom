@@ -384,8 +384,8 @@ const PrismaZoom = forwardRef<Ref, Props>((props, forwardedRef) => {
    * @param  {MouseEvent} event Mouse event
    */
   const handleMouseWheel = useCallback((event: WheelEvent) => {
-    event.preventDefault()
     if (!allowZoom || !allowWheel) return
+    event.preventDefault()
 
     // Use the scroll event delta to determine the zoom velocity
     const velocity = (-event.deltaY * scrollVelocity) / 100
